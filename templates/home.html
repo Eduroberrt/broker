@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Prestige Coin Vault - Buy, Sell & Accept Cryptocurrency with Ease{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pb-0" id="home-section">
+    <div class="absolute w-full h-full top-0 blur-effect" style="background: linear-gradient(90deg, rgba(189, 36, 223, 0.5), rgba(45, 106, 222, 0.5) 97.15%);"></div>
+    <div class="overflow-hidden">
+        <div class="container lg:pt-20 pt-10 relative">
+            <div class="relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 my-16 items-center">
+                    <div class="lg:col-span-7 mb-16">
+                        <h1 class="mb-5 text-left font-bold lg:text-7xl sm:text-6xl text-5xl sm:leading-snug leading-tight capitalize text-white">
+                            {{ translations.hero_title }} <br> {{ translations.hero_subtitle }}
+                        </h1>
+                        <p class="text-white font-normal mb-10 lg:max-w-[85%] text-left capitalize">
+                            {{ translations.hero_description }}
+                        </p>
+                        <div class="flex align-middle justify-start">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'dashboard' %}" class="text-xl font-semibold text-white py-4 px-6 lg:px-12 rounded-xl mr-6 cursor-pointer hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                                    {{ translations.get_started }}
+                                </a>
+                            {% else %}
+                                <a href="{% url 'signup' %}" class="text-xl font-semibold text-white py-4 px-6 lg:px-12 rounded-xl mr-6 cursor-pointer hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                                    {{ translations.get_started }}
+                                </a>
+                            {% endif %}
+                            <a href="#how-it-works" class="bg-transparent flex justify-center items-center text-white cursor-pointer hover:text-[#bd24df] transition-colors">
+                                <img src="{% static 'images/banner/playbutton.svg' %}" alt="play button" class="mr-3" width="47" height="47">
+                                <span>{{ translations.how_it_work }}</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-5 lg:-m-48 -m-20 overflow-hidden">
+                        <img src="{% static 'images/banner/banner.png' %}" alt="banner" width="1013" height="760">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Companies Section -->
+<section class="border-none -my-2 pt-0 bg-body-bg">
+    <div class="container">
+        <div class="companies-slider">
+            <div><img src="{% static 'images/companies/birdseye.svg' %}" alt="Birdseye" class="w-auto mx-auto"></div>
+            <div><img src="{% static 'images/companies/break.svg' %}" alt="Break" class="w-auto mx-auto"></div>
+            <div><img src="{% static 'images/companies/keddar.svg' %}" alt="Keddar" class="w-auto mx-auto"></div>
+            <div><img src="{% static 'images/companies/shield.svg' %}" alt="Shield" class="w-auto mx-auto"></div>
+            <div><img src="{% static 'images/companies/tandov.svg' %}" alt="Tandov" class="w-auto mx-auto"></div>
+            <div><img src="{% static 'images/companies/tree.svg' %}" alt="Tree" class="w-auto mx-auto"></div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="relative bg-body-bg" id="how-it-works">
+    <div class="absolute w-full h-full right-auto blur-effect" style="background: linear-gradient(90deg, rgba(189, 36, 223, 0.5), rgba(45, 106, 222, 0.5) 97.15%);"></div>
+    <div class="container">
+        <div class="text-center mb-14">
+            <h2 class="mb-3 capitalize text-lightsky sm:text-5xl text-4xl font-bold">How It Works</h2>
+            <p class="text-lightpurple max-w-2xl mx-auto md:text-lg font-normal md:leading-8 capitalize">
+                Getting started with crypto is simple. Create an account, verify your identity, and start buying, selling, or accepting digital currencies in just a few clicks — all on a secure and intuitive platform.
+            </p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-5 mt-20">
+            <div class="bg-darkmode border border-darkmode group hover:border-[#bd24df] hover:scale-105 duration-300 p-8 relative rounded-2xl hover:mb-5" data-aos="fade-up">
+                <div class="rounded-full flex justify-center absolute -top-10 left-[40%] p-6" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                    <img src="{% static 'images/work/icon-one.svg' %}" alt="Create Account" width="44" height="44">
+                </div>
+                <div>
+                    <img src="{% static 'images/icons/bg-arrow.svg' %}" alt="arrow" width="85" height="35">
+                </div>
+                <p class="text-2xl text-white/80 font-semibold text-center mt-8 capitalize">Create Account</p>
+                <p class="text-base font-normal text-white/60 text-center mt-2 overflow-hidden line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                    Sign up with your email, set up a secure password, and verify your identity to unlock full access to the platform. Getting started takes just a few minutes.
+                </p>
+            </div>
+            <div class="bg-darkmode border border-darkmode group hover:border-[#bd24df] hover:scale-105 duration-300 p-8 relative rounded-2xl hover:mb-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="rounded-full flex justify-center absolute -top-10 left-[40%] p-6" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                    <img src="{% static 'images/work/icon-two.svg' %}" alt="Add Funds" width="44" height="44">
+                </div>
+                <div>
+                    <img src="{% static 'images/icons/bg-arrow.svg' %}" alt="arrow" width="85" height="35">
+                </div>
+                <p class="text-2xl text-white/80 font-semibold text-center mt-8 capitalize">Add Funds</p>
+                <p class="text-base font-normal text-white/60 text-center mt-2 overflow-hidden line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                    Deposit money using your preferred payment method — bank transfer, debit card, or crypto wallet — and get ready to explore the world of digital assets.
+                </p>
+            </div>
+            <div class="bg-darkmode border border-darkmode group hover:border-[#bd24df] hover:scale-105 duration-300 p-8 relative rounded-2xl hover:mb-5" data-aos="fade-up" data-aos-delay="200">
+                <div class="rounded-full flex justify-center absolute -top-10 left-[40%] p-6" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                    <img src="{% static 'images/work/icon-three.svg' %}" alt="Buy, Sell & Exchange" width="44" height="44">
+                </div>
+                <div>
+                    <img src="{% static 'images/icons/bg-arrow.svg' %}" alt="arrow" width="85" height="35">
+                </div>
+                <p class="text-2xl text-white/80 font-semibold text-center mt-8 capitalize">Buy, Sell & Exchange</p>
+                <p class="text-base font-normal text-white/60 text-center mt-2 overflow-hidden line-clamp-3 group-hover:line-clamp-none transition-all duration-300">
+                    Easily buy or sell cryptocurrencies like Bitcoin and Ethereum, or convert between coins — all with real-time rates and low transaction fees.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Market Trend Table Section -->
+<section id="exchange-section" class="scroll-mt-20 bg-body-bg">
+    <div class="container">
+        <div class="rounded-2xl bg-tablebg p-8 relative z-10 overflow-hidden">
+            <p class="text-white/80 text-2xl">Market Trend Live Stream</p>
+            <div class="overflow-x-auto mt-10">
+                <table class="table-auto w-full border border-border">
+                    <thead>
+                        <tr class="text-white bg-border rounded-2xl">
+                            <th class="px-4 py-4 font-normal rounded-s-lg">#</th>
+                            <th class="px-4 py-4 text-start font-normal">NAME</th>
+                            <th class="px-4 py-4 font-normal">PRICE</th>
+                            <th class="px-4 py-4 font-normal">CHANGE 24H</th>
+                            <th class="px-4 py-4 font-normal">MARKET CAP</th>
+                            <th class="px-4 py-4 font-normal rounded-e-lg">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in crypto_assets %}
+                        <tr class="border-b border-b-border">
+                            <td class="px-4 py-6 text-center text-white">{{ forloop.counter }}</td>
+                            <td class="px-4 py-6 text-white">
+                                <div class="flex items-center gap-5">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background-color: {{ asset.color }}20; color: {{ asset.color }};">
+                                        {{ asset.icon }}
+                                    </div>
+                                    {{ asset.name }} ({{ asset.symbol }})
+                                </div>
+                            </td>
+                            <td class="px-4 py-6 text-center text-white">${{ asset.current_price|floatformat:2 }}</td>
+                            <td class="px-4 py-6 text-center {% if asset.percentage_change >= 0 %}text-[#2d6ade]{% else %}text-[#bd24df]{% endif %}">
+                                {% if asset.percentage_change >= 0 %}+{% endif %}{{ asset.percentage_change|floatformat:2 }}%
+                            </td>
+                            <td class="px-4 py-6 text-center text-white">${{ asset.current_price|floatformat:2 }}</td>
+                            <td class="px-4 py-6 text-center">
+                                <div class="flex gap-2 justify-center">
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'buy' %}" class="bg-[#2d6ade] text-white px-4 py-2 rounded-lg hover:bg-opacity-80 text-sm">Buy</a>
+                                        <a href="{% url 'sell' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-opacity-80 text-sm">Sell</a>
+                                    {% else %}
+                                        <a href="{% url 'signin' %}" class="bg-[#2d6ade] text-white px-4 py-2 rounded-lg hover:bg-opacity-80 text-sm">Buy</a>
+                                        <a href="{% url 'signin' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-opacity-80 text-sm">Sell</a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features-section" class="scroll-mt-20 bg-body-bg">
+    <div class="container relative">
+        <div class="absolute w-full h-full top-0 -left-1/4 blur-effect" style="background: linear-gradient(to right, #bd24df, #2d6ade);"></div>
+        <div class="gap-x-4 gap-y-4 relative z-10">
+            <div class="mb-10">
+                <p class="text-[#bd24df] text-base sm:text-lg font-semibold mb-4 text-center">{{ translations.features_heading }}</p>
+                <h2 class="font-semibold mb-6 text-center max-w-2xl mx-auto sm:leading-14 capitalize text-lightsky sm:text-5xl text-4xl">
+                    {{ translations.features_title }}
+                </h2>
+                <p class="lg:text-lg font-normal text-lightpurple text-center max-w-2xl mx-auto">
+                    {{ translations.features_description }}
+                </p>
+            </div>
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 lg:grid-cols-3 gap-x-10 gap-y-4">
+                <div class="bg-darkmode p-8 rounded-lg flex flex-col gap-3" data-aos="fade-up">
+                    <div class="rounded-full w-fit p-4 flex items-center justify-center" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                        <img src="{% static 'images/features/featureOne.svg' %}" alt="Secure Storage" width="60" height="60" class="w-auto">
+                    </div>
+                    <h5 class="text-white/80 text-lg font-medium capitalize">{{ translations.secure_storage }}</h5>
+                    <p class="text-white/40 text-sm font-normal">
+                        {{ translations.secure_storage_desc }}
+                    </p>
+                </div>
+                <div class="bg-darkmode p-8 rounded-lg flex flex-col gap-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="rounded-full w-fit p-4 flex items-center justify-center" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                        <img src="{% static 'images/features/featureTwo.svg' %}" alt="Free to Use" width="60" height="60" class="w-auto">
+                    </div>
+                    <h5 class="text-white/80 text-lg font-medium capitalize">{{ translations.free_to_use }}</h5>
+                    <p class="text-white/40 text-sm font-normal">
+                        {{ translations.free_to_use_desc }}
+                    </p>
+                </div>
+                <div class="bg-darkmode p-8 rounded-lg flex flex-col gap-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="rounded-full w-fit p-4 flex items-center justify-center" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                        <img src="{% static 'images/features/featureThree.svg' %}" alt="Real-Time Price Data" width="60" height="60" class="w-auto">
+                    </div>
+                    <h5 class="text-white/80 text-lg font-medium capitalize">{{ translations.real_time_data }}</h5>
+                    <p class="text-white/40 text-sm font-normal">
+                        {{ translations.real_time_data_desc }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq-section" class="scroll-mt-20 bg-body-bg">
+    <div class="container">
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+            <div data-aos="fade-right">
+                <img src="{% static 'images/faq/faq.svg' %}" alt="FAQ" class="w-full">
+            </div>
+            <div data-aos="fade-left">
+                <h2 class="text-lightsky sm:text-5xl text-4xl font-bold mb-8">Frequently Asked Questions</h2>
+                <div class="space-y-4">
+                    <details class="bg-darkmode p-6 rounded-lg">
+                        <summary class="text-white text-lg font-medium cursor-pointer">1. What is cryptocurrency?</summary>
+                        <p class="text-white/60 mt-4">
+                            Cryptocurrency is a digital or virtual currency secured by cryptography, making it nearly impossible to counterfeit or double-spend. It operates on decentralized networks called blockchains, allowing peer-to-peer transactions without intermediaries.
+                        </p>
+                    </details>
+                    <details class="bg-darkmode p-6 rounded-lg">
+                        <summary class="text-white text-lg font-medium cursor-pointer">2. Can cryptocurrency be converted to cash?</summary>
+                        <p class="text-white/60 mt-4">
+                            Yes, cryptocurrencies can be converted to cash through exchanges, peer-to-peer platforms, or crypto ATMs. Many platforms allow you to sell your crypto and withdraw funds directly to your bank account.
+                        </p>
+                    </details>
+                    <details class="bg-darkmode p-6 rounded-lg">
+                        <summary class="text-white text-lg font-medium cursor-pointer">3. How long should you hold cryptocurrency?</summary>
+                        <p class="text-white/60 mt-4">
+                            The holding period depends on your investment goals. Some traders prefer short-term trading to capitalize on price volatility, while others hold long-term, believing in the asset's future value growth. Always assess your risk tolerance before deciding.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Companies slider
+    $(document).ready(function(){
+        $('.companies-slider').slick({
+            dots: false,
+            infinite: true,
+            slidesToShow: 5,
+            slidesToScroll: 1,
+            arrows: false,
+            autoplay: true,
+            speed: 3000,
+            autoplaySpeed: 0,
+            cssEase: 'linear',
+            responsive: [
+                {
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 4,
+                    }
+                },
+                {
+                    breakpoint: 700,
+                    settings: {
+                        slidesToShow: 2,
+                    }
+                }
+            ]
+        });
+    });
+</script>
+{% endblock %}

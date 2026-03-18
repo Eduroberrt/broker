@@ -1,0 +1,83 @@
+/* Tailwind CSS Configuration */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --color-primary: #bd24df;
+    --color-secondary: #2d6ade;
+    --color-body-bg: #040D26;
+    --color-darkmode: #0c1b44;
+    --color-tablebg: #132259;
+    --color-border: #091945;
+    --color-lightblue: #8a9bca;
+    --color-lightsky: #ECF2FF;
+    --color-lightpurple: #B4C7ED;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-body-bg);
+    color: white;
+    overflow-x: hidden;
+    padding-top: 80px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+section {
+    padding: 3.5rem 0;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-primary {
+    background: linear-gradient(90deg, rgba(189, 36, 223, 0.5), rgba(45, 106, 222, 0.5) 97.15%);
+}
+
+.bg-gradient-simple {
+    background: linear-gradient(90deg, rgba(189, 36, 223, 0.1), rgba(45, 106, 222, 0.1) 97.15%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secondary);
+}
+
+/* Blur effect */
+.blur-effect {
+    filter: blur(390px);
+}
+
+/* Line clamp */
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

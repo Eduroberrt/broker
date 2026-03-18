@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive - Prestige Coin Vault</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/Prestige-favicon.png' %}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#bd24df',
+                        'secondary': '#2d6ade',
+                        'body-bg': '#040D26',
+                        'darkmode': '#0c1b44',
+                        'tablebg': '#132259',
+                        'border': '#091945',
+                        'lightblue': '#8a9bca',
+                        'lightsky': '#ECF2FF',
+                        'lightpurple': '#B4C7ED',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="bg-body-bg">
+    {% include 'partials/dashboard_header.html' %}
+    
+    <section class="pt-20 pb-24 lg:pb-20 min-h-screen" style="background: #040D26;">
+        <div class="container px-4 mx-auto">
+            <div class="mb-8">
+                <h1 class="text-2xl sm:text-4xl font-bold text-white mb-2 flex items-center gap-3" data-aos="fade-up">
+                    <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
+                    {{ translations.receive_crypto }}
+                </h1>
+                <p class="text-sm sm:text-base text-lightpurple">{{ translations.receive_crypto_description }}</p>
+            </div>
+            
+            <!-- Two Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Left Column: Receive Form -->
+                <div class="bg-darkmode rounded-lg p-6 border border-white/10" data-aos="fade-up">
+                    <form id="receive-form" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <!-- Select Cryptocurrency -->
+                        <div class="mb-6">
+                            <label class="block text-white mb-3 font-semibold">{{ translations.select_crypto }}</label>
+                            <div class="grid grid-cols-4 gap-3">
+                                <button type="button" class="crypto-select-btn border-2 border-primary bg-tablebg rounded-lg p-4 hover:border-primary transition-colors" data-crypto="BTC" data-address="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh">
+                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg" style="background-color: #f7931a;">
+                                        ₿
+                                    </div>
+                                    <div class="text-white text-sm font-semibold">BTC</div>
+                                </button>
+                                <button type="button" class="crypto-select-btn border border-white/10 bg-tablebg rounded-lg p-4 hover:border-primary transition-colors" data-crypto="XRP" data-address="0x7b4Fe1E927a2Fa160848ec019B590069B5b28E80">
+                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg" style="background-color: #23292f;">
+                                        ✕
+                                    </div>
+                                    <div class="text-white text-sm font-semibold">XRP</div>
+                                </button>
+                                <button type="button" class="crypto-select-btn border border-white/10 bg-tablebg rounded-lg p-4 hover:border-primary transition-colors" data-crypto="XLM" data-address="GDUVA2EXLVYVYERDHY2YH2WD7FGWXSWIKO342MYJWZX7CRCPLREYB22I">
+                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg" style="background-color: #14b6f6;">
+                                        ✦
+                                    </div>
+                                    <div class="text-white text-sm font-semibold">XLM</div>
+                                </button>
+                                <button type="button" class="crypto-select-btn border border-white/10 bg-tablebg rounded-lg p-4 hover:border-primary transition-colors" data-crypto="HBAR" data-address="ksetjtEULES3WjRXZh3qJzzLYEaMNazjS9kb4cdM32F">
+                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg" style="background-color: #000000;">
+                                        Ħ
+                                    </div>
+                                    <div class="text-white text-sm font-semibold">HBAR</div>
+                                </button>
+                            </div>
+                            <input type="hidden" id="crypto-asset-input" name="crypto_asset" value="BTC">
+                        </div>
+                        
+                        <!-- Wallet Address -->
+                        <div class="mb-6">
+                            <label class="block text-white mb-2 font-semibold">Your Wallet Address</label>
+                            <div class="relative">
+                                <input id="wallet-address" name="wallet_address" type="text" value="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" readonly class="w-full bg-tablebg border border-white/10 rounded-lg px-4 py-3 pr-12 text-white focus:outline-none focus:border-primary">
+                                <button type="button" id="copy-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:opacity-80">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p id="copy-feedback" class="text-xs text-green-500 mt-2 hidden">✓ Address copied to clipboard!</p>
+                        </div>
+                        
+                        <!-- Warning Notice -->
+                        <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+                            <div class="flex gap-3">
+                                <svg class="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <h4 class="text-yellow-500 font-semibold text-sm mb-1">{{ translations.important_notice }}</h4>
+                                    <ul class="text-white/80 text-xs space-y-1">
+                                        <li>{{ translations.only_send_selected }}</li>
+                                        <li>{{ translations.sending_other_coins }}</li>
+                                        <li>{{ translations.double_check_network }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Proof of Transfer -->
+                        <div class="mb-6">
+                            <label class="block text-white mb-2 font-semibold">{{ translations.proof_of_transfer }}</label>
+                            <input type="file" name="proof_of_transfer" accept="image/*,.pdf" required class="w-full bg-tablebg border border-white/10 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 focus:outline-none focus:border-primary">
+                            <p class="text-xs text-white/60 mt-2">{{ translations.upload_screenshot }}</p>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full py-4 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                            {{ translations.submit }}
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Right Column: Transaction History -->
+                <div class="bg-darkmode rounded-lg p-6 border border-white/10" data-aos="fade-up">
+                    <h3 class="text-white text-xl font-bold mb-4">{{ translations.transaction_history }}</h3>
+                    <div class="space-y-3 max-h-[600px] overflow-y-auto">
+                        {% if transactions %}
+                            {% for transaction in transactions %}
+                            <div class="bg-tablebg rounded-lg p-4 border border-white/10">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold" style="background-color: {{ transaction.crypto_asset.color }};">
+                                            {{ transaction.crypto_asset.icon }}
+                                        </div>
+                                        <span class="text-white font-semibold">{{ transaction.crypto_asset.symbol }}</span>
+                                    </div>
+                                    <span class="text-xs px-3 py-1 rounded-full font-semibold {% if transaction.status == 'pending' %}bg-yellow-500/20 text-yellow-500{% elif transaction.status == 'confirmed' %}bg-green-500/20 text-green-500{% else %}bg-red-500/20 text-red-500{% endif %}">
+                                        {{ transaction.get_status_display }}
+                                    </span>
+                                </div>
+                                {% if transaction.amount %}
+                                <p class="text-white text-sm mb-1">Amount: <span class="font-semibold">{{ transaction.amount }} {{ transaction.crypto_asset.symbol }}</span></p>
+                                {% endif %}
+                                <p class="text-white/60 text-xs">{{ transaction.created_at|date:"M d, Y h:i A" }}</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-8">
+                                <svg class="w-16 h-16 text-white/20 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p class="text-white/60 text-sm">{{ translations.no_transactions }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Processing Modal -->
+    <div id="processing-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div class="bg-darkmode rounded-lg p-8 max-w-sm mx-4 border border-white/10 text-center">
+            <div class="w-16 h-16 border-4 border-white/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+            <h3 class="text-white text-xl font-semibold mb-2">Processing...</h3>
+            <p class="text-white/60 text-sm">Submitting your transaction</p>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div class="bg-darkmode rounded-lg p-8 max-w-sm mx-4 border border-white/10 text-center">
+            <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <h3 class="text-white text-xl font-semibold mb-2">Transaction Submitted!</h3>
+            <p class="text-white/60 text-sm mb-6">Your transaction is being reviewed by our admin. You'll be notified once it's confirmed.</p>
+            <button onclick="closeConfirmationModal()" class="w-full py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+        <div class="grid grid-cols-5 gap-1 px-2 py-3">
+            <a href="{% url 'send' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                <span class="text-xs">Send</span>
+            </a>
+            <a href="{% url 'receive' %}" class="flex flex-col items-center gap-1 text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+                <span class="text-xs font-semibold">Receive</span>
+            </a>
+            <a href="{% url 'swap' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+                <span class="text-xs">Swap</span>
+            </a>
+            <a href="{% url 'buy' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span class="text-xs">Buy</span>
+            </a>
+            <a href="{% url 'sell' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                </svg>
+                <span class="text-xs">Sell</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- AOS Init -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
+
+        // Crypto selection
+        const addressInput = document.getElementById('wallet-address');
+        const cryptoAssetInput = document.getElementById('crypto-asset-input');
+        
+        document.querySelectorAll('.crypto-select-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update button states
+                document.querySelectorAll('.crypto-select-btn').forEach(b => {
+                    b.classList.remove('border-2', 'border-primary');
+                    b.classList.add('border', 'border-white/10');
+                });
+                this.classList.remove('border', 'border-white/10');
+                this.classList.add('border-2', 'border-primary');
+                
+                // Update address and hidden input
+                const address = this.dataset.address;
+                const crypto = this.dataset.crypto;
+                addressInput.value = address;
+                cryptoAssetInput.value = crypto;
+            });
+        });
+
+        // Copy to clipboard
+        const copyBtn = document.getElementById('copy-btn');
+        const copyFeedback = document.getElementById('copy-feedback');
+        
+        copyBtn.addEventListener('click', function() {
+            addressInput.select();
+            document.execCommand('copy');
+            
+            copyFeedback.classList.remove('hidden');
+            setTimeout(() => {
+                copyFeedback.classList.add('hidden');
+            }, 3000);
+        });
+
+        // Form submission with modals
+        const receiveForm = document.getElementById('receive-form');
+        const processingModal = document.getElementById('processing-modal');
+        const confirmationModal = document.getElementById('confirmation-modal');
+
+        receiveForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show processing modal
+            processingModal.classList.remove('hidden');
+            
+            // After 1 second, submit form and show confirmation
+            setTimeout(() => {
+                // Submit form using FormData
+                const formData = new FormData(receiveForm);
+                
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    processingModal.classList.add('hidden');
+                    confirmationModal.classList.remove('hidden');
+                })
+                .catch(error => {
+                    processingModal.classList.add('hidden');
+                    alert('An error occurred. Please try again.');
+                });
+            }, 1000);
+        });
+
+        function closeConfirmationModal() {
+            confirmationModal.classList.add('hidden');
+            window.location.reload(); // Reload to show new transaction in history
+        }
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('translate-x-full');
+            });
+        }
+        
+        if (mobileMenuClose) {
+            mobileMenuClose.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+        }
+    </script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

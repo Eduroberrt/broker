@@ -1,0 +1,142 @@
+{% load static %}
+<header class="fixed top-0 z-40 w-full transition-all duration-300 shadow-lg py-4 bg-darkmode border-b border-white/10">
+    <div class="container flex items-center justify-between px-4 sm:px-6">
+        <!-- Logo -->
+        <a href="{% url 'dashboard' %}" class="flex items-center space-x-2">
+            <img src="{% static 'images/Prestige.png' %}" alt="Prestige Coin Vault Logo" class="h-10">
+        </a>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center gap-6">
+            <a href="{% url 'send' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                {{ translations.send }}
+            </a>
+            <a href="{% url 'receive' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+                {{ translations.receive }}
+            </a>
+            <a href="{% url 'swap' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+                {{ translations.swap }}
+            </a>
+            <a href="{% url 'buy' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                {{ translations.buy }}
+            </a>
+            <a href="{% url 'sell' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                </svg>
+                {{ translations.sell }}
+            </a>
+        </nav>
+        
+        <!-- User Menu -->
+        <div class="hidden lg:flex items-center gap-4">
+            <!-- Notification Bell -->
+            <a href="{% url 'notifications' %}" class="relative text-white hover:text-[#bd24df] transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                {% if unread_notifications_count > 0 %}
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ unread_notifications_count }}</span>
+                {% endif %}
+            </a>
+            
+            <!-- Language Switcher -->
+            {% include 'partials/language_switcher.html' %}
+            
+            <div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5">
+                <svg class="w-5 h-5 text-[#bd24df]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-white">{{ user.username }}</span>
+            </div>
+            <a href="{% url 'logout' %}" class="px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                {{ translations.logout }}
+            </a>
+        </div>
+        
+        <!-- Mobile Menu Toggle -->
+        <div class="lg:hidden flex items-center gap-3">
+            <!-- Notification Bell for Mobile -->
+            <a href="{% url 'notifications' %}" class="relative text-white hover:text-[#bd24df] transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                {% if unread_notifications_count > 0 %}
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ unread_notifications_count }}</span>
+                {% endif %}
+            </a>
+            
+            <button id="mobile-menu-toggle" class="text-white text-2xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="lg:hidden fixed top-0 right-0 h-full w-full bg-darkmode shadow-lg transform translate-x-full transition-transform duration-300 max-w-xs z-50" style="background: #0c1b44;">
+        <div class="flex items-center justify-between p-4 border-b border-white/10">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-[#bd24df]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-white">{{ user.username }}</span>
+            </div>
+            <button id="mobile-menu-close" class="text-white text-2xl hover:text-[#bd24df]">&times;</button>
+        </div>
+        <nav class="flex flex-col p-4 text-white">
+            <a href="{% url 'send' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                {{ translations.send }}
+            </a>
+            <a href="{% url 'receive' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+                {{ translations.receive }}
+            </a>
+            <a href="{% url 'swap' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+                {{ translations.swap }}
+            </a>
+            <a href="{% url 'buy' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                {{ translations.buy }}
+            </a>
+            <a href="{% url 'sell' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                </svg>
+                {{ translations.sell }}
+            </a>
+            
+            <!-- Language Switcher in Mobile Menu -->
+            <div class="py-3 border-b border-white/10">
+                {% include 'partials/language_switcher.html' %}
+            </div>
+            
+            <a href="{% url 'logout' %}" class="mt-4 px-4 py-2 text-center text-white rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                {{ translations.logout }}
+            </a>
+        </nav>
+    </div>
+</header>

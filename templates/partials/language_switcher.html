@@ -1,0 +1,42 @@
+{% load i18n %}
+
+<div class="relative group">
+    <button class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+        </svg>
+        <span class="text-sm">{{ current_language|upper }}</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+    
+    <div class="absolute right-0 mt-2 w-48 rounded-lg bg-darkmode border border-white/10 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+        <form action="{% url 'set_language' %}" method="post" class="p-2">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.path }}">
+            
+            {% get_available_languages as AVAILABLE_LANGUAGES %}
+            
+            {% for lang_code, lang_name in AVAILABLE_LANGUAGES %}
+                <button type="submit" name="language" value="{{ lang_code }}" 
+                        class="w-full text-left px-3 py-2 rounded-lg text-white hover:bg-white/10 transition-all flex items-center gap-2 {% if lang_code == current_language %}bg-white/5{% endif %}">
+                    <span class="text-xl">
+                        {% if lang_code == 'en' %}🇬🇧
+                        {% elif lang_code == 'es' %}🇪🇸
+                        {% elif lang_code == 'fr' %}🇫🇷
+                        {% elif lang_code == 'de' %}🇩🇪
+                        {% elif lang_code == 'zh-hans' %}🇨🇳
+                        {% endif %}
+                    </span>
+                    {{ lang_name }}
+                    {% if lang_code == current_language %}
+                        <svg class="w-4 h-4 ml-auto text-[#bd24df]" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    {% endif %}
+                </button>
+            {% endfor %}
+        </form>
+    </div>
+</div>

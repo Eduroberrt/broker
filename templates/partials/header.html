@@ -1,0 +1,98 @@
+{% load static %}
+<header class="fixed top-0 z-40 w-full transition-all duration-300 shadow-lg py-4" style="background: #040D26; background-image: linear-gradient(90deg, rgba(189, 36, 223, 0.5), rgba(45, 106, 222, 0.5) 97.15%);">
+    <div class="container flex items-center justify-between">
+        <!-- Logo -->
+        <a href="{% url 'home' %}">
+            <img src="{% static 'images/Prestige.png' %}" alt="Prestige Coin Vault Logo" class="h-12">
+        </a>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex grow items-center gap-8 justify-center ml-14">
+            <a href="{% url 'home' %}" class="text-white hover:text-[#bd24df] transition-colors">{{ translations.home }}</a>
+            <a href="{% url 'home' %}#exchange-section" class="text-white hover:text-[#bd24df] transition-colors">Exchange</a>
+            <a href="{% url 'home' %}#features-section" class="text-white hover:text-[#bd24df] transition-colors">{{ translations.features }}</a>
+            <a href="{% url 'home' %}#faq-section" class="text-white hover:text-[#bd24df] transition-colors">FAQ</a>
+            <a href="{% url 'home' %}#contact" class="text-white hover:text-[#bd24df] transition-colors">{{ translations.contact }}</a>
+            <a href="{% url 'documentation' %}" class="text-white hover:text-[#bd24df] transition-colors">Docs</a>
+        </nav>
+        
+        <!-- Auth Buttons -->
+        <div class="flex items-center gap-4">
+            <!-- Language Switcher -->
+            {% include 'partials/language_switcher.html' %}
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="hidden lg:block text-white hover:text-[#bd24df] px-6 py-3 rounded-lg">Dashboard</a>
+                <a href="{% url 'logout' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #2d6ade, #bd24df);">{{ translations.logout }}</a>
+            {% else %}
+                <a href="{% url 'signin' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #bd24df, #2d6ade);">{{ translations.sign_in }}</a>
+                <a href="{% url 'signup' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #2d6ade, #bd24df);">{{ translations.sign_up }}</a>
+            {% endif %}
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="block lg:hidden p-2 rounded-lg mr-2">
+                <span class="block w-6 h-0.5 bg-white"></span>
+                <span class="block w-6 h-0.5 bg-white mt-1.5"></span>
+                <span class="block w-6 h-0.5 bg-white mt-1.5"></span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="lg:hidden fixed top-0 right-0 h-full w-full bg-darkmode shadow-lg transform translate-x-full transition-transform duration-300 max-w-xs z-50" style="background: #0c1b44;">
+        <div class="flex items-center justify-between p-4">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'images/Prestige.png' %}" alt="Prestige Coin Vault Logo" class="h-10">
+            </a>
+            <button id="mobile-menu-close" class="text-white text-2xl hover:text-[#bd24df]">&times;</button>
+        </div>
+        <nav class="flex flex-col items-start p-4 text-white">
+            <a href="{% url 'home' %}" class="block py-3 hover:text-[#bd24df]">{{ translations.home }}</a>
+            <a href="{% url 'home' %}#exchange-section" class="block py-3 hover:text-[#bd24df]">Exchange</a>
+            <a href="{% url 'home' %}#features-section" class="block py-3 hover:text-[#bd24df]">{{ translations.features }}</a>
+            <a href="{% url 'home' %}#faq-section" class="block py-3 hover:text-[#bd24df]">FAQ</a>
+            <a href="{% url 'home' %}#contact" class="block py-3 hover:text-[#bd24df]">{{ translations.contact }}</a>
+            <a href="{% url 'documentation' %}" class="block py-3 hover:text-[#bd24df]">Docs</a>
+            
+            <!-- Language Switcher in Mobile -->
+            <div class="py-3 w-full">
+                {% include 'partials/language_switcher.html' %}
+            </div>
+            
+            <div class="mt-4 flex flex-col space-y-4 w-full">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="bg-transparent border border-[#bd24df] text-[#bd24df] px-4 py-2 rounded-lg hover:bg-[#bd24df] hover:text-white text-center">Dashboard</a>
+                    <a href="{% url 'logout' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-transparent border border-[#bd24df] hover:text-[#bd24df] text-center">{{ translations.logout }}</a>
+                {% else %}
+                    <a href="{% url 'signin' %}" class="bg-transparent border border-[#bd24df] text-[#bd24df] px-4 py-2 rounded-lg hover:bg-[#bd24df] hover:text-white text-center">{{ translations.sign_in }}</a>
+                    <a href="{% url 'signup' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-transparent border border-[#bd24df] hover:text-[#bd24df] text-center">{{ translations.sign_up }}</a>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="lg:hidden fixed top-0 left-0 w-full h-full bg-black/50 z-40 hidden"></div>
+</header>
+
+<script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.remove('translate-x-full');
+        mobileMenuOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    });
+    
+    function closeMobileMenu() {
+        mobileMenu.classList.add('translate-x-full');
+        mobileMenuOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    
+    mobileMenuClose.addEventListener('click', closeMobileMenu);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+</script>

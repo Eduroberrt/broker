@@ -1,0 +1,387 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Prestige Coin Vault</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/Prestige-favicon.png' %}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#bd24df',
+                        'secondary': '#2d6ade',
+                        'body-bg': '#040D26',
+                        'darkmode': '#0c1b44',
+                        'tablebg': '#132259',
+                        'border': '#091945',
+                        'lightblue': '#8a9bca',
+                        'lightsky': '#ECF2FF',
+                        'lightpurple': '#B4C7ED',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-body-bg">
+    {% include 'partials/dashboard_header.html' %}
+    
+    <section class="pt-20 pb-24 lg:pb-20 min-h-screen" style="background: #040D26;">
+        <div class="container px-4">
+        <div class="mb-8">
+            <h1 class="text-2xl sm:text-4xl font-bold text-white mb-2" data-aos="fade-up">{{ translations.welcome }}, {{ user.username }}!</h1>
+            <p class="text-sm sm:text-base text-lightpurple">{{ translations.manage_portfolio }}</p>
+        </div>
+        
+        <!-- Wallet Balance -->
+        <div class="mb-8" data-aos="fade-up">
+            <h3 class="text-white text-lg font-semibold mb-3">{{ translations.wallet_balance }}</h3>
+            <div class="flex items-center gap-3">
+                <p id="wallet-balance" class="text-3xl font-bold text-white">${{ total_balance|floatformat:2 }}</p>
+                <button id="toggle-balance" class="p-2 rounded-lg hover:bg-white/10 transition-all">
+                    <svg id="eye-open" class="w-6 h-6 text-white/60 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg id="eye-closed" class="w-6 h-6 text-white/60 hover:text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- All Available Assets -->
+        <div class="rounded-lg shadow p-6 mb-8" style="background: rgba(12, 27, 68, 0.8);" data-aos="fade-up">
+            <h2 class="text-2xl font-bold text-white mb-6">{{ translations.your_assets }}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for asset in crypto_assets %}
+                <div class="flex items-center justify-between p-4 rounded-lg border border-white/10 hover:border-[{{ asset.color }}]/50 transition-all">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: {{ asset.color }};">
+                            <span class="text-white font-bold text-lg">{{ asset.icon }}</span>
+                        </div>
+                        <div>
+                            <p class="text-white font-semibold">{{ asset.name }}</p>
+                            {% if asset.id in wallet_dict %}
+                                <p class="text-white/60 text-sm">{{ wallet_dict|get_item:asset.id|divide:asset.current_price|floatformat:8 }} {{ asset.symbol }}</p>
+                            {% else %}
+                                <p class="text-white/40 text-sm">0.00000000 {{ asset.symbol }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        {% if asset.id in wallet_dict %}
+                        <p class="text-white font-bold text-lg">${{ wallet_dict|get_item:asset.id|floatformat:2 }}</p>
+                        {% else %}
+                        <p class="text-white/40 font-bold text-lg">$0.00</p>
+                        {% endif %}
+                        <p class="text-white/40 text-sm">{{ asset.symbol }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-2 text-center py-8">
+                    <p class="text-white/60">No crypto assets available. Please add them in the admin panel.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Market Trends -->
+        <div class="rounded-lg shadow p-4 sm:p-6" style="background: rgba(12, 27, 68, 0.8);" data-aos="fade-up">
+            <h2 class="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">{{ translations.market_trends }}</h2>
+            
+            <!-- Crypto Price Summary Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                {% for asset in crypto_assets %}
+                <div class="p-3 sm:p-4 rounded-lg border border-[{{ asset.color }}]/30" style="background-color: {{ asset.color }}0D;">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-1 sm:gap-2">
+                            <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white font-bold text-xs" style="background-color: {{ asset.color }};">{{ asset.icon }}</div>
+                            <div>
+                                <p class="text-white font-semibold text-xs sm:text-sm">{{ asset.name }}</p>
+                                <p class="text-white/40 text-[10px] sm:text-xs">{{ asset.symbol }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-white text-base sm:text-xl font-bold">{{ asset.formatted_price }}</p>
+                    <span class="{% if asset.is_positive_change %}text-green-500{% else %}text-red-500{% endif %} text-[10px] sm:text-xs font-semibold flex items-center gap-1">
+                        {% if asset.is_positive_change %}
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        {% else %}
+                        <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        {% endif %}
+                        {{ asset.percentage_change|floatformat:1 }}%
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Main Chart -->
+            <div class="bg-black/20 rounded-lg p-2 sm:p-4" style="position: relative; height: 400px;">
+                <canvas id="mainTrendChart" style="max-height: 100%;"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'partials/dashboard_footer.html' %}
+
+<!-- AOS Animation -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+    });
+</script>
+
+<!-- Wallet Balance Toggle -->
+<script>
+    let balanceVisible = true;
+    const balanceAmount = '${{ total_balance|floatformat:2 }}';
+    const balanceHidden = '••••••••';
+    
+    document.getElementById('toggle-balance').addEventListener('click', function() {
+        balanceVisible = !balanceVisible;
+        const balanceElement = document.getElementById('wallet-balance');
+        const eyeOpen = document.getElementById('eye-open');
+        const eyeClosed = document.getElementById('eye-closed');
+        
+        if (balanceVisible) {
+            balanceElement.textContent = balanceAmount;
+            eyeOpen.classList.remove('hidden');
+            eyeClosed.classList.add('hidden');
+        } else {
+            balanceElement.textContent = balanceHidden;
+            eyeOpen.classList.add('hidden');
+            eyeClosed.classList.remove('hidden');
+        }
+    });
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    
+    if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('translate-x-full');
+        });
+    }
+    
+    if (mobileMenuClose) {
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+        });
+    }
+</script>
+
+<!-- Chart.js Configuration -->
+<script>
+    // Time labels for 24 hours
+    const timeLabels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+    
+    // Get crypto data from Django context
+    const cryptoData = [
+        {% for asset in crypto_assets %}
+        {
+            name: '{{ asset.name }}',
+            color: '{{ asset.color }}',
+            data: {{ asset.chart_data|safe }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    // Chart.js default configuration
+    Chart.defaults.color = '#8a9bca';
+    Chart.defaults.borderColor = 'rgba(138, 155, 202, 0.1)';
+    
+    // Create main trend chart
+    function createMainChart() {
+        const ctx = document.getElementById('mainTrendChart');
+        if (!ctx) return;
+        
+        // Check if mobile
+        const isMobile = window.innerWidth < 768;
+        
+        // Create datasets for all cryptocurrencies
+        const datasets = cryptoData.map(crypto => ({
+            label: crypto.name,
+            data: crypto.data,
+            borderColor: crypto.color,
+            backgroundColor: crypto.color + '00',
+            borderWidth: isMobile ? 2 : 3,
+            fill: false,
+            tension: 0.4,
+            pointRadius: isMobile ? 0 : 3,
+            pointHoverRadius: isMobile ? 0 : 3,
+            pointBackgroundColor: crypto.color,
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2
+        }));
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                animation: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#ffffff',
+                            padding: isMobile ? 8 : 15,
+                            font: { 
+                                size: isMobile ? 10 : 13,
+                                weight: '500'
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            boxWidth: isMobile ? 6 : 8,
+                            boxHeight: isMobile ? 6 : 8
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(12, 27, 68, 0.95)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#B4C7ED',
+                        borderColor: '#bd24df',
+                        borderWidth: 1,
+                        padding: isMobile ? 8 : 12,
+                        displayColors: true,
+                        titleFont: {
+                            size: isMobile ? 11 : 13
+                        },
+                        bodyFont: {
+                            size: isMobile ? 10 : 12
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const value = context.parsed.y;
+                                label += (value >= 0 ? '+' : '') + value.toFixed(2) + '%';
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(138, 155, 202, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#8a9bca',
+                            font: {
+                                size: isMobile ? 9 : 11
+                            },
+                            maxRotation: isMobile ? 45 : 0,
+                            minRotation: isMobile ? 45 : 0
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(138, 155, 202, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#8a9bca',
+                            font: {
+                                size: isMobile ? 9 : 11
+                            },
+                            callback: function(value) {
+                                return value.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Initialize chart when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        createMainChart();
+    });
+</script>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+    <div class="grid grid-cols-5 gap-1 px-2 py-3">
+        <a href="{% url 'send' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+            <span class="text-xs">Send</span>
+        </a>
+        <a href="{% url 'receive' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+            <span class="text-xs">Receive</span>
+        </a>
+        <a href="{% url 'swap' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+            </svg>
+            <span class="text-xs">Swap</span>
+        </a>
+        <a href="{% url 'buy' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            <span class="text-xs">Buy</span>
+        </a>
+        <a href="{% url 'sell' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+            </svg>
+            <span class="text-xs">Sell</span>
+        </a>
+    </div>
+</nav>
+
+<!-- Custom JS -->
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
