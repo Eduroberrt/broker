@@ -33,6 +33,9 @@ urlpatterns += i18n_patterns(
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('portfolio/', views.portfolio_view, name='portfolio'),
+    path('explore/', views.explore_view, name='explore'),
+    path('more/', views.more_view, name='more'),
     path('send/', views.send_view, name='send'),
     path('receive/', views.receive_view, name='receive'),
     path('swap/', views.swap_view, name='swap'),
@@ -40,8 +43,14 @@ urlpatterns += i18n_patterns(
     path('sell/', views.sell_view, name='sell'),
     path('notifications/', views.notifications_view, name='notifications'),
     path('notifications/<int:notification_id>/mark-read/', views.mark_notification_read, name='mark_notification_read'),
+    path('profile/', views.profile_view, name='profile'),
+    path('settings/', views.settings_view, name='settings'),
+    path('help/', views.help_center_view, name='help_center'),
+    path('contact/', views.contact_support_view, name='contact_support'),
+    path('about/', views.about_view, name='about'),
 )
 
-# Serve static files in development
+# Serve static and media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

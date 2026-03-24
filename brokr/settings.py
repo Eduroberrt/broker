@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-6nvwg$7-#s)y6gush+)-b8v9*i0319&w0bhj=!=c#4-b*_jf*b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.prestigecoinvault.com','prestigecoinvault.com', 'localhost', '127.0.0.1']
 
 
 # Application definition

@@ -13,10 +13,10 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen flex flex-col">
     {% include 'partials/dashboard_header.html' %}
     
-    <main class="pt-24 pb-12">
+    <main class="pt-24 pb-12 flex-1">
         <div class="container mx-auto px-4 sm:px-6 max-w-4xl">
             <h1 class="text-3xl font-bold text-white mb-8">{{ translations.notifications }}</h1>
             
@@ -58,10 +58,25 @@
         }
         
         if (mobileMenuClose) {
-            mobileMenuClose.addEventListener('click', () => {
-                mobileMenu.classList.add('translate-x-full');
-            });
-        }
-    </script>
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+        });
+    }
+</script>
+{% include 'partials/dashboard_footer.html' %}
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 </body>
 </html>

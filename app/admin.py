@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction, Notification
+from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction, Notification, UserProfile, UserHolding, ContactMessage
 
 @admin.register(CryptoAsset)
 class CryptoAssetAdmin(admin.ModelAdmin):
@@ -11,7 +11,7 @@ class CryptoAssetAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'symbol', 'icon', 'color', 'order')
+            'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'order')
         }),
         ('Price Information', {
             'fields': ('current_price', 'base_price'),
@@ -132,3 +132,88 @@ class NotificationAdmin(admin.ModelAdmin):
     def user_display(self, obj):
         return obj.user.username if obj.user else "All Users"
     user_display.short_description = 'Recipient'
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'email_transactions', 'email_security', 'two_factor_enabled', 'updated_at']
+    list_filter = ['email_transactions', 'email_security', 'email_marketing', 'two_factor_enabled', 'created_at']
+    search_fields = ['user__username', 'user__email', 'bio']
+    ordering = ['-updated_at']
+    
+    fieldsets = (
+        ('User Information', {
+            'fields': ('user', 'bio', 'profile_image')
+        }),
+        ('Notification Preferences', {
+            'fields': ('email_transactions', 'email_security', 'email_marketing')
+        }),
+        ('Security Settings', {
+            'fields': ('two_factor_enabled',)
+        }),
+    )
+    
+    readonly_fields = ['created_at', 'updated_at']
+
+
+@admin.register(UserHolding)
+class UserHoldingAdmin(admin.ModelAdmin):
+    list_display = ['user', 'crypto_asset', 'balance', 'average_buy_price', 'current_value_display', 'profit_loss_display', 'updated_at']
+    list_filter = ['crypto_asset', 'created_at']
+    search_fields = ['user__username', 'crypto_asset__name', 'crypto_asset__symbol']
+    ordering = ['-balance']
+    
+    fieldsets = (
+        ('Holding Information', {
+            'fields': ('user', 'crypto_asset', 'balance', 'average_buy_price')
+        }),
+    )
+    
+    readonly_fields = ['created_at', 'updated_at']
+    
+    def current_value_display(self, obj):
+        value = float(obj.current_value)
+        return format_html('<span style="font-weight: bold;">${:,.2f}</span>', value)
+    current_value_display.short_description = 'Current Value'
+    
+    def profit_loss_display(self, obj):
+        pl = float(obj.profit_loss)
+        pl_pct = float(obj.profit_loss_percentage)
+        color = 'green' if pl >= 0 else 'red'
+        symbol = '▲' if pl >= 0 else '▼'
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{} ${:,.2f} ({:+.2f}%)</span>',
+            color, symbol, abs(pl), pl_pct
+        )
+    profit_loss_display.short_description = 'P/L'
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ['name', 'email', 'subject', 'status', 'created_at', 'has_response']
+    list_filter = ['status', 'created_at']
+    search_fields = ['name', 'email', 'subject', 'message']
+    list_editable = ['status']
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        ('Message Information', {
+            'fields': ('user', 'name', 'email', 'subject', 'message', 'status')
+        }),
+        ('Admin Response', {
+            'fields': ('admin_response', 'responded_at'),
+            'description': 'Add your response to the user message'
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ['created_at', 'updated_at']
+    
+    def has_response(self, obj):
+        if obj.admin_response:
+            return format_html('<span style="color: green; font-weight: bold;">✓ Yes</span>')
+        return format_html('<span style="color: orange;">✗ No</span>')
+    has_response.short_description = 'Responded'

@@ -131,9 +131,15 @@
                             <td class="px-4 py-6 text-center text-white">{{ forloop.counter }}</td>
                             <td class="px-4 py-6 text-white">
                                 <div class="flex items-center gap-5">
+                                    {% if asset.icon_url %}
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center bg-white p-2">
+                                        <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-full h-full object-contain">
+                                    </div>
+                                    {% else %}
                                     <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background-color: {{ asset.color }}20; color: {{ asset.color }};">
                                         {{ asset.icon }}
                                     </div>
+                                    {% endif %}
                                     {{ asset.name }} ({{ asset.symbol }})
                                 </div>
                             </td>
@@ -276,4 +282,18 @@
         });
     });
 </script>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 {% endblock %}

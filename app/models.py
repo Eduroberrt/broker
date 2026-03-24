@@ -1,12 +1,15 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class CryptoAsset(models.Model):
     """Model to store cryptocurrency prices controlled by admin"""
     name = models.CharField(max_length=50, unique=True, help_text="Full name (e.g., Bitcoin)")
     symbol = models.CharField(max_length=10, unique=True, help_text="Symbol (e.g., BTC)")
     icon = models.CharField(max_length=10, default="₿", help_text="Icon character to display")
+    icon_url = models.URLField(max_length=500, blank=True, null=True, help_text="URL to coin logo image")
     color = models.CharField(max_length=20, default="#f7931a", help_text="Hex color code")
     
     # Price information
@@ -237,3 +240,132 @@ class Notification(models.Model):
         if self.user:
             return f"{self.title} - {self.user.username}"
         return f"{self.title} - All Users"
+
+
+class UserProfile(models.Model):
+    """Extended user profile with additional fields"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True, null=True, help_text="User biography")
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True, help_text="Profile picture")
+    
+    # Notification preferences
+    email_transactions = models.BooleanField(default=True, help_text="Receive transaction notifications")
+    email_security = models.BooleanField(default=True, help_text="Receive security alerts")
+    email_marketing = models.BooleanField(default=False, help_text="Receive marketing emails")
+    
+    # Security settings
+    two_factor_enabled = models.BooleanField(default=False, help_text="Two-factor authentication enabled")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
+    
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    """Automatically create UserProfile when User is created"""
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    """Save UserProfile when User is saved"""
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
+
+
+class UserHolding(models.Model):
+    """Model to track user's cryptocurrency holdings"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='holdings')
+    crypto_asset = models.ForeignKey(CryptoAsset, on_delete=models.CASCADE, related_name='user_holdings')
+    balance = models.DecimalField(
+        max_digits=20,
+        decimal_places=8,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="Amount of cryptocurrency held"
+    )
+    average_buy_price = models.DecimalField(
+        max_digits=20,
+        decimal_places=8,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="Average price at which this asset was purchased"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['user', 'crypto_asset']
+        ordering = ['-balance']
+        verbose_name = "User Holding"
+        verbose_name_plural = "User Holdings"
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.crypto_asset.symbol}: {self.balance}"
+    
+    @property
+    def current_value(self):
+        """Calculate current value in USD"""
+        return self.balance * self.crypto_asset.current_price
+    
+    @property
+    def total_invested(self):
+        """Calculate total amount invested"""
+        return self.balance * self.average_buy_price
+    
+    @property
+    def profit_loss(self):
+        """Calculate profit/loss"""
+        return self.current_value - self.total_invested
+    
+    @property
+    def profit_loss_percentage(self):
+        """Calculate profit/loss percentage"""
+        if self.total_invested == 0:
+            return 0
+        return ((self.current_value - self.total_invested) / self.total_invested) * 100
+    
+    @property
+    def is_profit(self):
+        """Check if holding is in profit"""
+        return self.profit_loss >= 0
+
+
+class ContactMessage(models.Model):
+    """Model to store contact form submissions"""
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('in_progress', 'In Progress'),
+        ('resolved', 'Resolved'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_messages', null=True, blank=True)
+    name = models.CharField(max_length=100, help_text="Full name")
+    email = models.EmailField(help_text="Contact email")
+    subject = models.CharField(max_length=200, help_text="Message subject")
+    message = models.TextField(help_text="Message content")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    
+    # Admin response
+    admin_response = models.TextField(blank=True, null=True, help_text="Admin response to message")
+    responded_at = models.DateTimeField(null=True, blank=True, help_text="When admin responded")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Contact Message"
+        verbose_name_plural = "Contact Messages"
+    
+    def __str__(self):
+        return f"{self.name} - {self.subject} ({self.status})"

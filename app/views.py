@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.http import JsonResponse
-from .models import CryptoAsset, ReceiveTransaction, UserWallet, SwapTransaction, SellTransaction, Notification
+from .models import CryptoAsset, ReceiveTransaction, UserWallet, SwapTransaction, SellTransaction, Notification, UserProfile
+from PIL import Image
+from decimal import Decimal
+import os
 
 
 def home(request):
@@ -325,3 +328,390 @@ def mark_notification_read(request, notification_id):
         except Notification.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Notification not found'})
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
+@login_required
+def profile_view(request):
+    """User profile view with edit functionality"""
+    # Ensure user has a profile
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        # Update user information
+        request.user.first_name = request.POST.get('first_name', '')
+        request.user.last_name = request.POST.get('last_name', '')
+        request.user.username = request.POST.get('username', request.user.username)
+        request.user.email = request.POST.get('email', request.user.email)
+        
+        # Update profile bio
+        profile.bio = request.POST.get('bio', '')
+        
+        # Handle profile image upload
+        if 'profile_image' in request.FILES:
+            image = request.FILES['profile_image']
+            
+            # Delete old image if exists
+            if profile.profile_image:
+                try:
+                    os.remove(profile.profile_image.path)
+                except:
+                    pass
+            
+            # Save new image
+            profile.profile_image = image
+            
+            # Optionally resize image to save space
+            try:
+                img = Image.open(profile.profile_image.path)
+                if img.height > 500 or img.width > 500:
+                    output_size = (500, 500)
+                    img.thumbnail(output_size)
+                    img.save(profile.profile_image.path)
+            except:
+                pass
+        
+        try:
+            request.user.save()
+            profile.save()
+            messages.success(request, 'Profile updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+        
+        return redirect('profile')
+    
+    context = {
+        'current_year': datetime.now().year
+    }
+    return render(request, 'profile.html', context)
+
+
+@login_required
+def settings_view(request):
+    """User settings view with password change and preferences"""
+    # Ensure user has a profile
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type')
+        
+        if form_type == 'password':
+            # Handle password change
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            # Validate current password
+            if not request.user.check_password(current_password):
+                messages.error(request, 'Current password is incorrect.')
+            elif new_password != confirm_password:
+                messages.error(request, 'New passwords do not match.')
+            elif len(new_password) < 8:
+                messages.error(request, 'Password must be at least 8 characters long.')
+            else:
+                # Update password
+                request.user.set_password(new_password)
+                request.user.save()
+                update_session_auth_hash(request, request.user)  # Keep user logged in
+                messages.success(request, 'Password changed successfully!')
+        
+        elif form_type == 'notifications':
+            # Handle notification preferences
+            profile.email_transactions = 'email_transactions' in request.POST
+            profile.email_security = 'email_security' in request.POST
+            profile.email_marketing = 'email_marketing' in request.POST
+            profile.save()
+            messages.success(request, 'Notification preferences updated!')
+        
+        elif form_type == '2fa':
+            # Handle 2FA toggle
+            profile.two_factor_enabled = not profile.two_factor_enabled
+            profile.save()
+            status = 'enabled' if profile.two_factor_enabled else 'disabled'
+            messages.success(request, f'Two-factor authentication {status}!')
+        
+        return redirect('settings')
+    
+    context = {
+        'current_year': datetime.now().year
+    }
+    return render(request, 'settings.html', context)
+
+
+@login_required
+def portfolio_view(request):
+    """Portfolio page view - displays user's actual cryptocurrency holdings from UserWallet"""
+    # Get user's wallet balances (same as dashboard)
+    user_wallets = UserWallet.objects.filter(user=request.user).select_related('crypto_asset')
+    
+    # Calculate portfolio metrics
+    holdings = []
+    total_value = Decimal('0')
+    
+    for wallet in user_wallets:
+        if wallet.balance > 0:  # Only include non-zero balances
+            asset = wallet.crypto_asset
+            # Balance is in USD, calculate crypto amount using current price
+            crypto_amount = wallet.balance / asset.current_price if asset.current_price > 0 else Decimal('0')
+            
+            total_value += wallet.balance
+            
+            holdings.append({
+                'id': wallet.id,
+                'name': asset.name,
+                'symbol': asset.symbol,
+                'icon': asset.icon,
+                'icon_url': asset.icon_url,
+                'color': asset.color,
+                'balance': float(crypto_amount),  # Crypto amount
+                'value': float(wallet.balance),  # USD value
+                'current_price': float(asset.current_price),
+                'percentage_change': asset.percentage_change,
+                'is_positive_change': asset.is_positive_change,
+                'base_price': float(asset.base_price),
+            })
+    
+    # Sort holdings by value (highest first)
+    holdings.sort(key=lambda x: x['value'], reverse=True)
+    
+    # Calculate top holdings for allocation (top 5)
+    top_holdings = []
+    for holding in holdings[:5]:
+        holding_copy = holding.copy()
+        holding_copy['portfolio_percentage'] = (holding['value'] / float(total_value) * 100) if total_value > 0 else 0
+        holding_copy['portfolio_value'] = holding['value']
+        top_holdings.append(holding_copy)
+    
+    # Calculate overall gains based on base price
+    total_base_value = Decimal('0')
+    for holding in holdings:
+        # Calculate what the value would have been at base price
+        crypto_amount = Decimal(str(holding['balance']))
+        base_price = Decimal(str(holding['base_price']))
+        total_base_value += crypto_amount * base_price
+    
+    total_gain = float(total_value - total_base_value)
+    total_gain_percentage = (total_gain / float(total_base_value) * 100) if total_base_value > 0 else 0
+    
+    # Find best and worst performers
+    if holdings:
+        best_performer = max(holdings, key=lambda x: x['percentage_change'])
+        worst_performer = min(holdings, key=lambda x: x['percentage_change'])
+    else:
+        best_performer = None
+        worst_performer = None
+    
+    # Performance data for different timeframes
+    current_value = float(total_value)
+    base_value = float(total_base_value)
+    
+    # 24H data (hourly intervals)
+    performance_24h = generate_performance_data(base_value, current_value, 24, 0.05)
+    
+    # 7D data (daily intervals)
+    performance_7d = generate_performance_data(base_value, current_value, 7, 0.15)
+    
+    # 1M data (daily intervals, 30 points)
+    performance_1m = generate_performance_data(base_value, current_value, 30, 0.25)
+    
+    # 1Y data (monthly intervals, 12 points)
+    performance_1y = generate_performance_data(base_value * 0.7, current_value, 12, 0.40)
+    
+    # ALL data (yearly intervals, assume 3 years)
+    performance_all = generate_performance_data(base_value * 0.5, current_value, 36, 0.50)
+    
+    context = {
+        'current_year': datetime.now().year,
+        'holdings': holdings,
+        'top_holdings': top_holdings,
+        'total_balance': float(total_value),
+        'total_invested': float(total_base_value),
+        'total_gain': total_gain,
+        'total_gain_percentage': total_gain_percentage,
+        'is_total_profit': total_gain >= 0,
+        'total_assets': len(holdings),
+        'best_performer': best_performer,
+        'worst_performer': worst_performer,
+        'daily_change': abs(total_gain * 0.15),  # Simulated daily volatility
+        'performance_24h': performance_24h,
+        'performance_7d': performance_7d,
+        'performance_1m': performance_1m,
+        'performance_1y': performance_1y,
+        'performance_all': performance_all,
+        'has_holdings': len(holdings) > 0,
+    }
+    return render(request, 'portfolio.html', context)
+
+
+def generate_performance_data(start_value, end_value, num_points, volatility_factor):
+    """Generate realistic performance data with volatility"""
+    if start_value <= 0:
+        return {
+            'labels': [str(i) for i in range(num_points)],
+            'data': [0] * num_points
+        }
+    
+    data = []
+    total_change = end_value - start_value
+    
+    for i in range(num_points):
+        progress = i / (num_points - 1) if num_points > 1 else 1
+        
+        # Base value progression
+        value = start_value + (total_change * progress)
+        
+        # Add volatility (oscillation that decreases as we approach the end)
+        if i < num_points - 1:  # Don't add volatility to the last point
+            volatility = start_value * volatility_factor * (1 - progress * 0.5)
+            oscillation = volatility * (0.5 - abs(0.5 - (i % 4) / 4))
+            value += oscillation
+        
+        data.append(round(value, 2))
+    
+    # Ensure last point is exactly the end value
+    data[-1] = end_value
+    
+    # Generate labels based on number of points
+    if num_points <= 24:
+        labels = [f'{i}h' if i > 0 else 'Now' for i in range(num_points)]
+    elif num_points <= 31:
+        labels = [f'Day {i+1}' for i in range(num_points)]
+    elif num_points <= 12:
+        labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][:num_points]
+    else:
+        labels = [f'M{i+1}' for i in range(num_points)]
+    
+    return {
+        'labels': labels,
+        'data': data
+    }
+
+
+@login_required
+def explore_view(request):
+    """Explore markets page view"""
+    crypto_assets = CryptoAsset.objects.all().order_by('order')
+    
+    # Category mappings for filtering
+    category_map = {
+        'BTC': ['all', 'trending', 'favorites'],
+        'ETH': ['all', 'trending', 'favorites', 'defi'],
+        'XLM': ['all'],
+        'USDT': ['all', 'favorites'],
+        'HBAR': ['all', 'gainers'],
+        'BNB': ['all', 'trending', 'defi'],
+        'SOL': ['all', 'trending', 'gainers', 'defi', 'nft'],
+        'XRP': ['all', 'gainers'],
+        'ADA': ['all', 'defi'],
+        'DOGE': ['all', 'trending', 'gainers'],
+        'DOT': ['all', 'defi'],
+        'MATIC': ['all', 'gainers', 'defi', 'nft'],
+        'LTC': ['all'],
+        'AVAX': ['all', 'gainers', 'defi', 'nft'],
+        'GOLD': ['all', 'losers'],
+        'TSLA-X': ['all', 'trending', 'gainers'],
+        'SPXAI': ['all', 'trending', 'gainers'],
+        'PAIMON': ['all', 'gainers'],
+    }
+    
+    # Add market data and categories for display
+    assets_with_data = []
+    for asset in crypto_assets:
+        asset.week_change = asset.percentage_change * 1.2  # Simulated 7-day change
+        asset.market_cap = asset.current_price * 1000000  # Simulated market cap in billions
+        asset.volume_24h = asset.current_price * 50000  # Simulated 24h volume in millions
+        
+        # Assign categories based on performance
+        categories = category_map.get(asset.symbol, ['all'])
+        
+        # Auto-categorize as gainer or loser based on percentage change
+        if asset.percentage_change > 5 and 'gainers' not in categories:
+            categories.append('gainers')
+        elif asset.percentage_change < 0 and 'losers' not in categories:
+            categories.append('losers')
+        
+        asset.categories = ','.join(categories)
+        assets_with_data.append(asset)
+    
+    # Get trending assets (top 4 by percentage change)
+    trending_assets = sorted(crypto_assets, key=lambda x: x.percentage_change, reverse=True)[:4]
+    for trending in trending_assets:
+        trending.week_change = trending.percentage_change * 1.2
+    
+    context = {
+        'current_year': datetime.now().year,
+        'crypto_assets': assets_with_data,
+        'trending_assets': trending_assets,
+    }
+    return render(request, 'explore.html', context)
+
+
+@login_required
+def more_view(request):
+    """More options page view"""
+    # Get unread notification count
+    notification_count = Notification.objects.filter(user=request.user, is_read=False).count()
+    
+    context = {
+        'current_year': datetime.now().year,
+        'notification_count': notification_count,
+    }
+    return render(request, 'more.html', context)
+
+
+@login_required
+def help_center_view(request):
+    """Help Center page view"""
+    context = {
+        'current_year': datetime.now().year,
+    }
+    return render(request, 'help_center.html', context)
+
+
+@login_required
+def contact_support_view(request):
+    """Contact Support page view - handles both GET (display form) and POST (submit form)"""
+    from .models import ContactMessage
+    from .translations import TRANSLATIONS
+    from django.utils.translation import get_language
+    
+    # Get current language
+    language = get_language()
+    if language and '-' in language:
+        language = language.split('-')[0]
+    if not language or language not in TRANSLATIONS:
+        language = 'en'
+    
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message_text = request.POST.get('message')
+        
+        if name and email and subject and message_text:
+            # Create contact message
+            ContactMessage.objects.create(
+                user=request.user,
+                name=name,
+                email=email,
+                subject=subject,
+                message=message_text,
+                status='new'
+            )
+            messages.success(request, TRANSLATIONS[language]['message_sent_success'])
+            return redirect('contact_support')
+        else:
+            messages.error(request, TRANSLATIONS[language]['fill_required_fields'])
+    
+    context = {
+        'current_year': datetime.now().year,
+    }
+    return render(request, 'contact_support.html', context)
+
+
+@login_required
+def about_view(request):
+    """About page view"""
+    context = {
+        'current_year': datetime.now().year,
+    }
+    return render(request, 'about.html', context)

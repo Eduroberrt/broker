@@ -7,36 +7,30 @@
         </a>
         
         <!-- Desktop Navigation -->
-        <nav class="hidden lg:flex items-center gap-6">
-            <a href="{% url 'send' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+        <nav class="hidden lg:flex items-center gap-8">
+            <a href="{% url 'dashboard' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
-                {{ translations.send }}
+                Home
             </a>
-            <a href="{% url 'receive' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+            <a href="{% url 'portfolio' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                {{ translations.receive }}
+                Portfolio
             </a>
-            <a href="{% url 'swap' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+            <a href="{% url 'explore' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
-                {{ translations.swap }}
+                Explore
             </a>
-            <a href="{% url 'buy' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
+            <a href="{% url 'more' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
-                {{ translations.buy }}
-            </a>
-            <a href="{% url 'sell' %}" class="text-white hover:text-[#bd24df] transition-colors flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-                </svg>
-                {{ translations.sell }}
+                More
             </a>
         </nav>
         
@@ -55,19 +49,24 @@
             <!-- Language Switcher -->
             {% include 'partials/language_switcher.html' %}
             
-            <div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5">
-                <svg class="w-5 h-5 text-[#bd24df]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            <a href="{% url 'profile' %}" class="flex items-center hover:opacity-80 transition-opacity">
+                <img src="{% if user.profile.profile_image %}{{ user.profile.profile_image.url }}{% else %}https://ui-avatars.com/api/?name={{ user.username }}&size=80&background=bd24df&color=fff{% endif %}" alt="{{ user.username }}" class="w-8 h-8 rounded-full object-cover border-2 border-[#bd24df]">
+            </a>
+            <a href="{% url 'settings' %}" class="p-2 text-white rounded-lg hover:bg-white/10 transition-colors" title="{{ translations.settings }}">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                <span class="text-white">{{ user.username }}</span>
-            </div>
-            <a href="{% url 'logout' %}" class="px-4 py-2 text-white rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
-                {{ translations.logout }}
             </a>
         </div>
         
         <!-- Mobile Menu Toggle -->
         <div class="lg:hidden flex items-center gap-3">
+            <!-- Profile Avatar for Mobile -->
+            <a href="{% url 'profile' %}" class="flex-shrink-0">
+                <img src="{% if user.profile.profile_image %}{{ user.profile.profile_image.url }}{% else %}https://ui-avatars.com/api/?name={{ user.username }}&size=80&background=bd24df&color=fff{% endif %}" alt="{{ user.username }}" class="w-8 h-8 rounded-full object-cover border-2 border-[#bd24df]">
+            </a>
+            
             <!-- Notification Bell for Mobile -->
             <a href="{% url 'notifications' %}" class="relative text-white hover:text-[#bd24df] transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +86,7 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="lg:hidden fixed top-0 right-0 h-full w-full bg-darkmode shadow-lg transform translate-x-full transition-transform duration-300 max-w-xs z-50" style="background: #0c1b44;">
+    <div id="mobile-menu" class="lg:hidden fixed top-0 right-0 h-full w-full transform translate-x-full transition-transform duration-300 max-w-xs z-50" style="background: #0c1b44;">
         <div class="flex items-center justify-between p-4 border-b border-white/10">
             <div class="flex items-center gap-2">
                 <svg class="w-5 h-5 text-[#bd24df]" fill="currentColor" viewBox="0 0 20 20">
@@ -98,45 +97,57 @@
             <button id="mobile-menu-close" class="text-white text-2xl hover:text-[#bd24df]">&times;</button>
         </div>
         <nav class="flex flex-col p-4 text-white">
-            <a href="{% url 'send' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
-                {{ translations.send }}
-            </a>
-            <a href="{% url 'receive' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-                </svg>
-                {{ translations.receive }}
-            </a>
-            <a href="{% url 'swap' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                </svg>
-                {{ translations.swap }}
-            </a>
-            <a href="{% url 'buy' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                </svg>
-                {{ translations.buy }}
-            </a>
-            <a href="{% url 'sell' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
-                </svg>
-                {{ translations.sell }}
-            </a>
-            
             <!-- Language Switcher in Mobile Menu -->
             <div class="py-3 border-b border-white/10">
                 {% include 'partials/language_switcher.html' %}
             </div>
             
-            <a href="{% url 'logout' %}" class="mt-4 px-4 py-2 text-center text-white rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+            <a href="{% url 'profile' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                {{ translations.profile }}
+            </a>
+            
+            <a href="{% url 'settings' %}" class="py-3 hover:text-[#bd24df] border-b border-white/10 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {{ translations.settings }}
+            </a>
+            
+            <a href="{% url 'logout' %}" class="mt-4 px-4 py-2 text-center text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
                 {{ translations.logout }}
             </a>
         </nav>
     </div>
 </header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        
+        if (mobileMenuToggle && mobileMenu && mobileMenuClose) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                mobileMenu.classList.remove('translate-x-full');
+            });
+            
+            mobileMenuClose.addEventListener('click', function(e) {
+                e.preventDefault();
+                mobileMenu.classList.add('translate-x-full');
+            });
+            
+            // Close on clicking outside
+            mobileMenu.addEventListener('click', function(e) {
+                if (e.target === mobileMenu) {
+                    mobileMenu.classList.add('translate-x-full');
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,486 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>More - Prestige Coin Vault</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/Prestige-favicon.png' %}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#bd24df',
+                        'secondary': '#2d6ade',
+                        'body-bg': '#040D26',
+                        'darkmode': '#0c1b44',
+                        'tablebg': '#132259',
+                        'border': '#091945',
+                        'lightblue': '#8a9bca',
+                        'lightsky': '#ECF2FF',
+                        'lightpurple': '#B4C7ED',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body class="bg-body-bg text-white">
+    {% include 'partials/dashboard_header.html' %}
+
+    <div class="container mx-auto px-4 sm:px-6 pt-20 pb-24 lg:pb-20 min-h-screen" style="background: #040D26;">
+        <!-- Header Section with User Greeting -->
+        <div class="mb-8 mt-4" data-aos="fade-down">
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">More Features</h1>
+                <p class="text-white/60 text-sm sm:text-base">Explore additional tools and manage your account</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions Grid -->
+        <div class="mb-8" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold">Quick Actions</h2>
+                <div class="w-12 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                <a href="{% url 'send' %}" class="group relative overflow-hidden bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-2xl p-4 sm:p-6 border border-white/10 hover:border-primary/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/20">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-purple-600/20 rounded-full blur-2xl group-hover:bg-purple-600/30 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-600 to-purple-500 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base mb-1">Send</p>
+                        <p class="text-xs sm:text-sm text-white/60">Transfer crypto</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'receive' %}" class="group relative overflow-hidden bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-2xl p-4 sm:p-6 border border-white/10 hover:border-secondary/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-secondary/20">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-600/20 rounded-full blur-2xl group-hover:bg-blue-600/30 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                            </svg>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base mb-1">Receive</p>
+                        <p class="text-xs sm:text-sm text-white/60">Get crypto</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'swap' %}" class="group relative overflow-hidden bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-2xl p-4 sm:p-6 border border-white/10 hover:border-green-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/20">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-green-600/20 rounded-full blur-2xl group-hover:bg-green-600/30 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                            </svg>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base mb-1">Swap</p>
+                        <p class="text-xs sm:text-sm text-white/60">Exchange coins</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'buy' %}" class="group relative overflow-hidden bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-2xl p-4 sm:p-6 border border-white/10 hover:border-orange-500/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-orange-500/20">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-orange-600/20 rounded-full blur-2xl group-hover:bg-orange-600/30 transition-all"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-600 to-orange-500 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 group-hover:rotate-6 transition-transform">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base mb-1">Buy</p>
+                        <p class="text-xs sm:text-sm text-white/60">Purchase crypto</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tools & Services -->
+        <div class="mb-8" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold">Tools & Services</h2>
+                <div class="w-12 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                <a href="#calculator-modal" onclick="openCalculator()" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-primary/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-600/10 border border-purple-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-purple-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Price Calculator</p>
+                            <p class="text-xs sm:text-sm text-white/60">Convert currencies</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="#alerts-modal" onclick="openPriceAlerts()" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-blue-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600/10 border border-blue-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-blue-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Price Alerts</p>
+                            <p class="text-xs sm:text-sm text-white/60">Set notifications</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="#analysis-modal" onclick="openMarketAnalysis()" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-green-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600/10 border border-green-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-green-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Market Analysis</p>
+                            <p class="text-xs sm:text-sm text-white/60">Advanced charts</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="#rewards-modal" onclick="openEarnRewards()" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-yellow-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-yellow-600/10 border border-yellow-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-yellow-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base">Earn Rewards</p>
+                            <p class="text-xs sm:text-sm text-white/60">Staking & interest</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{% url 'sell' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-red-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-600/10 border border-red-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-red-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Sell</p>
+                            <p class="text-xs sm:text-sm text-white/60">Convert to cash</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="#history-modal" onclick="openTransactionHistory()" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-indigo-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-indigo-600/10 border border-indigo-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-indigo-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Transaction History</p>
+                            <p class="text-xs sm:text-sm text-white/60">View all activity</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Account & Settings -->
+        <div class="mb-8" data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold">Account & Settings</h2>
+                <div class="w-12 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                <a href="{% url 'profile' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-primary/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-600/10 border border-purple-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-purple-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Profile</p>
+                            <p class="text-xs sm:text-sm text-white/60">Manage your info</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{% url 'settings' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-blue-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600/10 border border-blue-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-blue-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Settings</p>
+                            <p class="text-xs sm:text-sm text-white/60">Preferences & security</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{% url 'notifications' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-green-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="relative w-12 h-12 sm:w-14 sm:h-14 bg-green-600/10 border border-green-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-green-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            {% if notification_count > 0 %}
+                            <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-xs font-bold rounded-full flex items-center justify-center">{{ notification_count }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Notifications</p>
+                            <p class="text-xs sm:text-sm text-white/60">View all alerts</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {% if notification_count > 0 %}
+                            <span class="hidden sm:block px-2 py-1 bg-red-600 text-white text-xs font-semibold rounded-full">{{ notification_count }}</span>
+                            {% endif %}
+                            <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{% url 'dashboard' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-indigo-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-indigo-600/10 border border-indigo-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-indigo-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 13a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Dashboard</p>
+                            <p class="text-xs sm:text-sm text-white/60">Overview & stats</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Support & Resources -->
+        <div class="mb-8" data-aos="fade-up" data-aos-delay="400">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold">Support & Resources</h2>
+                <div class="w-12 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                <a href="{% url 'help_center' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-primary/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-600/10 border border-purple-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-purple-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Help Center</p>
+                            <p class="text-xs sm:text-sm text-white/60">FAQs & guides</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{% url 'contact_support' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-blue-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-600/10 border border-blue-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-blue-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">Contact Support</p>
+                            <p class="text-xs sm:text-sm text-white/60">Get assistance</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="{% url 'about' %}" class="group bg-white/5 backdrop-blur-lg hover:bg-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-green-500/50 transition-all duration-300">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600/10 border border-green-600/20 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:bg-green-600/20 transition-all">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm sm:text-base mb-1">About Us</p>
+                            <p class="text-xs sm:text-sm text-white/60">Learn more</p>
+                        </div>
+                        <svg class="w-5 h-5 text-white/30 group-hover:text-white/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Logout Section -->
+        <div data-aos="fade-up" data-aos-delay="500">
+            <a href="{% url 'logout' %}" class="group block bg-gradient-to-br from-red-600/10 to-red-500/10 hover:from-red-600/20 hover:to-red-500/20 backdrop-blur-lg rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-red-600/30 hover:border-red-600/50 transition-all duration-300">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-600/20 border border-red-600/30 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm sm:text-base text-red-400 mb-1">Sign Out</p>
+                        <p class="text-xs sm:text-sm text-red-400/60">Logout from your account</p>
+                    </div>
+                    <svg class="w-5 h-5 text-red-400/60 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    {% include 'partials/dashboard_footer.html' %}
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+        <div class="grid grid-cols-4 gap-1 px-2 py-3">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs">Portfolio</span>
+            </a>
+            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span class="text-xs">Explore</span>
+            </a>
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                <span class="text-xs">More</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- AOS Animation Init -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 600,
+            once: true,
+            easing: 'ease-out'
+        });
+
+        // Placeholder functions for future modal implementations
+        function openCalculator() {
+            alert('Price Calculator feature coming soon!');
+        }
+
+        function openPriceAlerts() {
+            alert('Price Alerts feature coming soon!');
+        }
+
+        function openMarketAnalysis() {
+            alert('Market Analysis feature coming soon!');
+        }
+
+        function openEarnRewards() {
+            alert('Earn Rewards feature coming soon!');
+        }
+
+        function openTransactionHistory() {
+            alert('Transaction History feature coming soon!');
+        }
+
+        function openHelpCenter() {
+            alert('Help Center feature coming soon!');
+        }
+
+        function openContactSupport() {
+            alert('Contact Support feature coming soon!');
+        }
+
+        function openAbout() {
+            alert('About page feature coming soon!');
+    }
+</script>
+
+<!-- Custom JS -->
+<script src="{% static 'js/main.js' %}"></script>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

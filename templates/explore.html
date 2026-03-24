@@ -1,0 +1,741 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore - Prestige Coin Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkmode: '#0c1b44',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0c1b44 0%, #1a2456 100%);
+            min-height: 100vh;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .filter-tab {
+            position: relative;
+            overflow: hidden;
+        }
+        .filter-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        .filter-tab:hover::before {
+            left: 100%;
+        }
+        .crypto-row {
+            transition: all 0.3s ease;
+        }
+        .crypto-row:hover {
+            transform: translateX(4px);
+        }
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .animate-modal {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        #assetModal::-webkit-scrollbar {
+            width: 8px;
+        }
+        #assetModal::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        #assetModal::-webkit-scrollbar-thumb {
+            background: rgba(189, 36, 223, 0.5);
+            border-radius: 4px;
+        }
+        #assetModal::-webkit-scrollbar-thumb:hover {
+            background: rgba(189, 36, 223, 0.7);
+        }
+    </style>
+</head>
+<body class="text-white">
+    {% include 'partials/dashboard_header.html' %}
+
+    <div class="container mx-auto px-4 sm:px-6 pt-24 pb-32">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold mb-2">Explore Markets</h1>
+            <p class="text-white/60">Discover trending cryptocurrencies and market opportunities</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-8">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="Search cryptocurrencies..." 
+                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pl-12 text-white placeholder-white/40 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
+                <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <div id="resultCount" class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-white/60 hidden">
+                    <span id="countText"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="mb-8">
+            <div class="flex flex-wrap lg:flex-nowrap gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide">
+                <button onclick="filterCategory('all')" data-category="all" class="filter-tab px-5 py-2.5 bg-purple-600 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">All</button>
+                <button onclick="filterCategory('favorites')" data-category="favorites" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Favorites ⭐</button>
+                <button onclick="filterCategory('trending')" data-category="trending" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Trending 🔥</button>
+                <button onclick="filterCategory('gainers')" data-category="gainers" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Gainers 📈</button>
+                <button onclick="filterCategory('losers')" data-category="losers" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Losers 📉</button>
+                <button onclick="filterCategory('defi')" data-category="defi" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">DeFi 🏦</button>
+                <button onclick="filterCategory('nft')" data-category="nft" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">NFT 🎨</button>
+            </div>
+        </div>
+
+        <!-- Market Overview Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-green-500/20 to-green-700/20 border border-green-500/30 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/80">Market Cap</span>
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-bold mb-1">$2.45T</p>
+                <p class="text-sm text-green-400">+3.24% (24h)</p>
+            </div>
+            <div class="bg-gradient-to-br from-blue-500/20 to-blue-700/20 border border-blue-500/30 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/80">24h Volume</span>
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-bold mb-1">$156.8B</p>
+                <p class="text-sm text-blue-400">Trading Volume</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-500/20 to-purple-700/20 border border-purple-500/30 rounded-xl p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-white/80">BTC Dominance</span>
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-bold mb-1">54.7%</p>
+                <p class="text-sm text-purple-400">Market Share</p>
+            </div>
+        </div>
+
+        <!-- Cryptocurrency List -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden">
+            <div class="overflow-x-auto lg:overflow-x-visible">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-white/10">
+                            <th class="text-left p-4 text-white/60 font-semibold">#</th>
+                            <th class="text-left p-4 text-white/60 font-semibold">Asset</th>
+                            <th class="text-right p-4 text-white/60 font-semibold">Price</th>
+                            <th class="text-right p-4 text-white/60 font-semibold hidden sm:table-cell">24h %</th>
+                            <th class="text-right p-4 text-white/60 font-semibold hidden md:table-cell">7d %</th>
+                            <th class="text-right p-4 text-white/60 font-semibold hidden lg:table-cell">Market Cap</th>
+                            <th class="text-right p-4 text-white/60 font-semibold hidden lg:table-cell">Volume (24h)</th>
+                            <th class="text-right p-4 text-white/60 font-semibold">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cryptoList">
+                        {% for asset in crypto_assets %}
+                        <tr class="crypto-row border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer" 
+                            data-categories="{{ asset.categories }}" 
+                            data-name="{{ asset.name }}" 
+                            data-symbol="{{ asset.symbol }}"
+                            data-price="{{ asset.formatted_price }}"
+                            data-change="{{ asset.percentage_change }}"
+                            data-week-change="{{ asset.week_change|floatformat:2 }}"
+                            data-market-cap="{{ asset.market_cap|floatformat:0 }}"
+                            data-volume="{{ asset.volume_24h|floatformat:0 }}"
+                            data-icon-url="{{ asset.icon_url }}"
+                            data-color="{{ asset.color }}"
+                            data-icon="{{ asset.icon }}"
+                            onclick="openAssetModal(this)">
+                            <td class="p-4 text-white/60">{{ forloop.counter }}</td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-3">
+                                    {% if asset.icon_url %}
+                                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center p-2 flex-shrink-0">
+                                        <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-full h-full object-contain">
+                                    </div>
+                                    {% else %}
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0" style="background-color: {{ asset.color }};">
+                                        {{ asset.icon }}
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <p class="font-semibold">{{ asset.name }}</p>
+                                        <p class="text-sm text-white/60">{{ asset.symbol }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4 text-right font-semibold">{{ asset.formatted_price }}</td>
+                            <td class="p-4 text-right hidden sm:table-cell">
+                                {% if asset.is_positive_change %}
+                                <span class="text-green-400 flex items-center gap-1 justify-end">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                    </svg>
+                                    +{{ asset.percentage_change }}%
+                                </span>
+                                {% else %}
+                                <span class="text-red-400 flex items-center gap-1 justify-end">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V4"/>
+                                    </svg>
+                                    {{ asset.percentage_change }}%
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4 text-right hidden md:table-cell">
+                                <span class="text-green-400">+{{ asset.week_change|floatformat:2 }}%</span>
+                            </td>
+                            <td class="p-4 text-right hidden lg:table-cell text-white/80">${{ asset.market_cap|floatformat:0 }}B</td>
+                            <td class="p-4 text-right hidden lg:table-cell text-white/80">${{ asset.volume_24h|floatformat:0 }}M</td>
+                            <td class="p-4 text-right">
+                                <button class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-semibold transition-colors">
+                                    Trade
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Trending Section -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold mb-6">Trending Now 🔥</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {% for trending in trending_assets %}
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-all cursor-pointer hover:scale-105"
+                    data-name="{{ trending.name }}"
+                    data-symbol="{{ trending.symbol }}"
+                    data-price="{{ trending.formatted_price }}"
+                    data-change="{{ trending.percentage_change }}"
+                    data-week-change="{{ trending.week_change|floatformat:2 }}"
+                    data-icon-url="{{ trending.icon_url }}"
+                    data-color="{{ trending.color }}"
+                    data-icon="{{ trending.icon }}"
+                    onclick="openAssetModal(this)">
+                    <div class="flex items-center gap-3 mb-4">
+                        {% if trending.icon_url %}
+                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center p-2">
+                            <img src="{{ trending.icon_url }}" alt="{{ trending.name }}" class="w-full h-full object-contain">
+                        </div>
+                        {% else %}
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style="background-color: {{ trending.color }};">
+                            {{ trending.icon }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <p class="font-semibold">{{ trending.name }}</p>
+                            <p class="text-sm text-white/60">{{ trending.symbol }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xl font-bold">{{ trending.formatted_price }}</p>
+                        {% if trending.is_positive_change %}
+                        <span class="text-green-400 text-sm font-semibold">+{{ trending.percentage_change }}%</span>
+                        {% else %}
+                        <span class="text-red-400 text-sm font-semibold">{{ trending.percentage_change }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Asset Detail Modal -->
+    <div id="assetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-darkmode to-[#1a2456] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl animate-modal">
+            <div class="sticky top-0 bg-gradient-to-br from-darkmode to-[#1a2456] border-b border-white/10 p-6 flex items-center justify-between z-10">
+                <div class="flex items-center gap-4">
+                    <div id="modalIcon" class="w-16 h-16 rounded-full flex items-center justify-center"></div>
+                    <div>
+                        <h3 id="modalName" class="text-2xl font-bold"></h3>
+                        <p id="modalSymbol" class="text-white/60"></p>
+                    </div>
+                </div>
+                <button onclick="closeAssetModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- Price Section -->
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <p class="text-white/60 text-sm mb-2">Current Price</p>
+                    <div class="flex items-end gap-4">
+                        <h2 id="modalPrice" class="text-4xl font-bold"></h2>
+                        <div id="modalChange" class="flex items-center gap-1 mb-2"></div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                        <p class="text-white/60 text-sm mb-1">24h Change</p>
+                        <p id="modal24h" class="text-xl font-semibold"></p>
+                    </div>
+                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                        <p class="text-white/60 text-sm mb-1">7d Change</p>
+                        <p id="modal7d" class="text-xl font-semibold"></p>
+                    </div>
+                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                        <p class="text-white/60 text-sm mb-1">Market Cap</p>
+                        <p id="modalMarketCap" class="text-xl font-semibold"></p>
+                    </div>
+                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                        <p class="text-white/60 text-sm mb-1">24h Volume</p>
+                        <p id="modalVolume" class="text-xl font-semibold"></p>
+                    </div>
+                </div>
+
+                <!-- Price Chart Placeholder -->
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h4 class="text-lg font-semibold mb-4">Price Chart (7 Days)</h4>
+                    <div class="h-48 flex items-center justify-center">
+                        <canvas id="assetChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid md:grid-cols-3 gap-3">
+                    <a href="{% url 'buy' %}" class="block px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-xl text-center font-semibold transition-all hover:scale-105">
+                        Buy
+                    </a>
+                    <a href="{% url 'sell' %}" class="block px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-xl text-center font-semibold transition-all hover:scale-105">
+                        Sell
+                    </a>
+                    <a href="{% url 'swap' %}" class="block px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 rounded-xl text-center font-semibold transition-all hover:scale-105">
+                        Swap
+                    </a>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="bg-gradient-to-br from-purple-600/20 to-blue-600/20 border border-purple-500/30 rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-6 h-6 text-purple-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <p class="font-semibold mb-1">About this asset</p>
+                            <p class="text-sm text-white/80" id="modalDescription">
+                                Track real-time prices and market data. Use the action buttons above to trade this cryptocurrency on our platform.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+        <div class="grid grid-cols-4 gap-1 px-2 py-3">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-xs">Home</span>
+            </a>
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs">Portfolio</span>
+            </a>
+            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span class="text-xs">Explore</span>
+            </a>
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                <span class="text-xs">More</span>
+            </a>
+        </div>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let assetChartInstance = null;
+
+        // Open asset detail modal
+        function openAssetModal(element) {
+            const modal = document.getElementById('assetModal');
+            const name = element.dataset.name;
+            const symbol = element.dataset.symbol;
+            const price = element.dataset.price;
+            const change = parseFloat(element.dataset.change);
+            const weekChange = element.dataset.weekChange;
+            const marketCap = element.dataset.marketCap;
+            const volume = element.dataset.volume;
+            const iconUrl = element.dataset.iconUrl;
+            const color = element.dataset.color;
+            const icon = element.dataset.icon;
+
+            // Update modal content
+            document.getElementById('modalName').textContent = name;
+            document.getElementById('modalSymbol').textContent = symbol;
+            document.getElementById('modalPrice').textContent = price;
+
+            // Update icon
+            const modalIcon = document.getElementById('modalIcon');
+            if (iconUrl && iconUrl !== 'None') {
+                modalIcon.innerHTML = `<img src="${iconUrl}" alt="${name}" class="w-full h-full object-contain p-2 bg-white rounded-full">`;
+            } else {
+                modalIcon.style.backgroundColor = color;
+                modalIcon.innerHTML = `<span class="text-white font-bold text-xl">${icon}</span>`;
+            }
+
+            // Update change indicators
+            const changeElement = document.getElementById('modalChange');
+            const isPositive = change >= 0;
+            changeElement.innerHTML = `
+                <svg class="w-5 h-5 ${isPositive ? 'text-green-400' : 'text-red-400'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isPositive ? 'M5 10l7-7m0 0l7 7m-7-7v18' : 'M19 14l-7 7m0 0l-7-7m7 7V4'}"/>
+                </svg>
+                <span class="${isPositive ? 'text-green-400' : 'text-red-400'} text-lg font-semibold">
+                    ${isPositive ? '+' : ''}${change}%
+                </span>
+            `;
+
+            // Update stats
+            document.getElementById('modal24h').innerHTML = `
+                <span class="${isPositive ? 'text-green-400' : 'text-red-400'}">
+                    ${isPositive ? '+' : ''}${change}%
+                </span>
+            `;
+            document.getElementById('modal7d').innerHTML = `
+                <span class="${parseFloat(weekChange) >= 0 ? 'text-green-400' : 'text-red-400'}">
+                    ${parseFloat(weekChange) >= 0 ? '+' : ''}${weekChange}%
+                </span>
+            `;
+            document.getElementById('modalMarketCap').textContent = marketCap ? `$${marketCap}B` : 'N/A';
+            document.getElementById('modalVolume').textContent = volume ? `$${volume}M` : 'N/A';
+
+            // Create price chart
+            createAssetChart(change);
+
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close asset modal
+        function closeAssetModal() {
+            const modal = document.getElementById('assetModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+            
+            // Destroy chart instance
+            if (assetChartInstance) {
+                assetChartInstance.destroy();
+                assetChartInstance = null;
+            }
+        }
+
+        // Create price chart for asset
+        function createAssetChart(currentChange) {
+            const ctx = document.getElementById('assetChart');
+            if (!ctx) return;
+
+            // Destroy existing chart
+            if (assetChartInstance) {
+                assetChartInstance.destroy();
+            }
+
+            // Generate sample data based on current change
+            const baseValue = 100;
+            const volatility = Math.abs(currentChange) / 2;
+            const data = [];
+            let value = baseValue * (1 - currentChange / 100);
+            
+            for (let i = 0; i < 7; i++) {
+                const randomChange = (Math.random() - 0.5) * volatility;
+                value += randomChange;
+                data.push(value);
+            }
+            data[6] = baseValue; // End at current value
+
+            const isPositive = currentChange >= 0;
+
+            assetChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        data: data,
+                        borderColor: isPositive ? '#4ade80' : '#f87171',
+                        backgroundColor: isPositive ? 'rgba(74, 222, 128, 0.1)' : 'rgba(248, 113, 113, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: isPositive ? '#4ade80' : '#f87171',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const change = ((context.parsed.y - data[0]) / data[0] * 100).toFixed(2);
+                                    return `Change: ${change >= 0 ? '+' : ''}${change}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        y: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Close modal on background click
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('assetModal');
+            if (event.target === modal) {
+                closeAssetModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAssetModal();
+            }
+        });
+
+        // Filter by category
+        function filterCategory(category) {
+            currentFilter = category;
+            applyFilters();
+            
+            // Update active tab styling
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                if (tab.dataset.category === category) {
+                    tab.classList.remove('bg-white/10', 'hover:bg-white/20');
+                    tab.classList.add('bg-purple-600');
+                } else {
+                    tab.classList.remove('bg-purple-600');
+                    tab.classList.add('bg-white/10', 'hover:bg-white/20');
+                }
+            });
+        }
+
+        // Apply both search and category filters
+        function applyFilters() {
+            const rows = document.querySelectorAll('.crypto-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const categories = row.dataset.categories || '';
+                const name = row.dataset.name.toLowerCase();
+                const symbol = row.dataset.symbol.toLowerCase();
+                
+                // Check category match
+                const categoryMatch = currentFilter === 'all' || categories.includes(currentFilter);
+                
+                // Check search match
+                const searchMatch = currentSearch === '' || 
+                    name.includes(currentSearch) || 
+                    symbol.includes(currentSearch);
+                
+                if (categoryMatch && searchMatch) {
+                    row.style.display = '';
+                    // Fade in animation
+                    row.style.opacity = '0';
+                    setTimeout(() => {
+                        row.style.transition = 'opacity 0.3s ease-in-out';
+                        row.style.opacity = '1';
+                    }, visibleCount * 30);
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update result count
+            const resultCount = document.getElementById('resultCount');
+            const countText = document.getElementById('countText');
+            if (currentSearch !== '' || currentFilter !== 'all') {
+                resultCount.classList.remove('hidden');
+                countText.textContent = `${visibleCount} result${visibleCount !== 1 ? 's' : ''}`;
+            } else {
+                resultCount.classList.add('hidden');
+            }
+            
+            // Show message if no results
+            const tbody = document.getElementById('cryptoList');
+            let noResultsRow = document.getElementById('no-results-row');
+            
+            if (visibleCount === 0) {
+                if (!noResultsRow) {
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'no-results-row';
+                    noResultsRow.innerHTML = `
+                        <td colspan="8" class="p-8 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <svg class="w-16 h-16 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p class="text-white/60 text-lg">No cryptocurrencies found</p>
+                                <p class="text-white/40 text-sm">Try adjusting your filters or search term</p>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+            } else if (noResultsRow) {
+                noResultsRow.remove();
+            }
+        }
+
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+            if (mobileMenuToggle && mobileMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.remove('translate-x-full');
+                });
+            }
+
+            if (mobileMenuClose && mobileMenu) {
+                mobileMenuClose.addEventListener('click', function() {
+                    mobileMenu.classList.add('translate-x-full');
+                });
+            }
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (mobileMenu && !mobileMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+                    mobileMenu.classList.add('translate-x-full');
+                }
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    currentSearch = e.target.value.toLowerCase();
+                    applyFilters();
+                });
+            }
+
+            // Add favorite toggle functionality
+            document.querySelectorAll('.crypto-row').forEach(row => {
+                row.addEventListener('dblclick', function(e) {
+                    if (e.target.tagName !== 'BUTTON') {
+                        const categories = row.dataset.categories;
+                        if (categories.includes('favorites')) {
+                            row.dataset.categories = categories.replace(',favorites', '').replace('favorites,', '').replace('favorites', '');
+                        } else {
+                            row.dataset.categories = categories + ',favorites';
+                        }
+                        // Visual feedback
+                        row.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            row.style.transform = 'scale(1)';
+                        }, 100);
+                }
+            });
+        });
+    });
+</script>
+{% include 'partials/dashboard_footer.html' %}
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>
