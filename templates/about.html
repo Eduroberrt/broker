@@ -40,7 +40,7 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body class="bg-body-bg text-white">
+<body class="bg-white">
     {% include 'partials/dashboard_header.html' %}
 
     <div class="container mx-auto px-4 sm:px-6 pt-20 pb-24 lg:pb-20 min-h-screen" style="background: #040D26;">
@@ -52,14 +52,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-white">{{ translations.about_prestige_coin_vault }}</h1>
-                <p class="text-white/60 text-sm sm:text-base max-w-2xl mx-auto">{{ translations.about_description }}</p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-gray-900">{{ translations.about_prestige_coin_vault }}</h1>
+                <p class="text-gray-900/60 text-sm sm:text-base max-w-2xl mx-auto">{{ translations.about_description }}</p>
             </div>
         </div>
 
         <div class="max-w-5xl mx-auto space-y-8">
             <!-- Mission Statement -->
-            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 sm:p-8" data-aos="fade-up">
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 sm:p-8" data-aos="fade-up">
                 <h2 class="text-2xl sm:text-3xl font-bold mb-4 flex items-center gap-3">
                     <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,76 +68,76 @@
                     </div>
                     {{ translations.our_mission }}
                 </h2>
-                <p class="text-white/80 text-base sm:text-lg leading-relaxed">
+                <p class="text-gray-900/80 text-base sm:text-lg leading-relaxed">
                     {{ translations.our_mission_text }}
                 </p>
             </div>
 
             <!-- Core Values -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6" data-aos="fade-up" data-aos-delay="100">
                     <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ translations.security_first }}</h3>
-                    <p class="text-white/60 text-sm">{{ translations.security_first_desc }}</p>
+                    <p class="text-gray-900/60 text-sm">{{ translations.security_first_desc }}</p>
                 </div>
 
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6" data-aos="fade-up" data-aos-delay="200">
                     <div class="w-12 h-12 bg-green-600/20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ translations.user_centric }}</h3>
-                    <p class="text-white/60 text-sm">{{ translations.user_centric_desc }}</p>
+                    <p class="text-gray-900/60 text-sm">{{ translations.user_centric_desc }}</p>
                 </div>
 
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6" data-aos="fade-up" data-aos-delay="300">
                     <div class="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ translations.transparency }}</h3>
-                    <p class="text-white/60 text-sm">{{ translations.transparency_desc }}</p>
+                    <p class="text-gray-900/60 text-sm">{{ translations.transparency_desc }}</p>
                 </div>
 
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6" data-aos="fade-up" data-aos-delay="400">
                     <div class="w-12 h-12 bg-orange-600/20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ translations.innovation }}</h3>
-                    <p class="text-white/60 text-sm">{{ translations.innovation_desc }}</p>
+                    <p class="text-gray-900/60 text-sm">{{ translations.innovation_desc }}</p>
                 </div>
 
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6" data-aos="fade-up" data-aos-delay="500">
                     <div class="w-12 h-12 bg-pink-600/20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ translations.compliance }}</h3>
-                    <p class="text-white/60 text-sm">{{ translations.compliance_desc }}</p>
+                    <p class="text-gray-900/60 text-sm">{{ translations.compliance_desc }}</p>
                 </div>
 
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6" data-aos="fade-up" data-aos-delay="600">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6" data-aos="fade-up" data-aos-delay="600">
                     <div class="w-12 h-12 bg-indigo-600/20 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold mb-2">{{ translations.global_reach }}</h3>
-                    <p class="text-white/60 text-sm">{{ translations.global_reach_desc }}</p>
+                    <p class="text-gray-900/60 text-sm">{{ translations.global_reach_desc }}</p>
                 </div>
             </div>
 
             <!-- What We Offer -->
-            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 sm:p-8" data-aos="fade-up" data-aos-delay="700">
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 sm:p-8" data-aos="fade-up" data-aos-delay="700">
                 <h2 class="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-3">
                     <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,7 +153,7 @@
                         </svg>
                         <div>
                             <h4 class="font-semibold mb-1">{{ translations.instant_trading }}</h4>
-                            <p class="text-white/60 text-sm">{{ translations.instant_trading_desc }}</p>
+                            <p class="text-gray-900/60 text-sm">{{ translations.instant_trading_desc }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-4 bg-white/5 rounded-xl">
@@ -162,7 +162,7 @@
                         </svg>
                         <div>
                             <h4 class="font-semibold mb-1">{{ translations.secure_wallets }}</h4>
-                            <p class="text-white/60 text-sm">{{ translations.secure_wallets_desc }}</p>
+                            <p class="text-gray-900/60 text-sm">{{ translations.secure_wallets_desc }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-4 bg-white/5 rounded-xl">
@@ -171,7 +171,7 @@
                         </svg>
                         <div>
                             <h4 class="font-semibold mb-1">{{ translations.real_time_charts }}</h4>
-                            <p class="text-white/60 text-sm">{{ translations.real_time_charts_desc }}</p>
+                            <p class="text-gray-900/60 text-sm">{{ translations.real_time_charts_desc }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-4 bg-white/5 rounded-xl">
@@ -180,7 +180,7 @@
                         </svg>
                         <div>
                             <h4 class="font-semibold mb-1">{{ translations.portfolio_tracking }}</h4>
-                            <p class="text-white/60 text-sm">{{ translations.portfolio_tracking_desc }}</p>
+                            <p class="text-gray-900/60 text-sm">{{ translations.portfolio_tracking_desc }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-4 bg-white/5 rounded-xl">
@@ -189,7 +189,7 @@
                         </svg>
                         <div>
                             <h4 class="font-semibold mb-1">{{ translations.24_7_support }}</h4>
-                            <p class="text-white/60 text-sm">{{ translations.24_7_support_desc }}</p>
+                            <p class="text-gray-900/60 text-sm">{{ translations.24_7_support_desc }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3 p-4 bg-white/5 rounded-xl">
@@ -198,7 +198,7 @@
                         </svg>
                         <div>
                             <h4 class="font-semibold mb-1">{{ translations.mobile_app }}</h4>
-                            <p class="text-white/60 text-sm">{{ translations.mobile_app_desc }}</p>
+                            <p class="text-gray-900/60 text-sm">{{ translations.mobile_app_desc }}</p>
                         </div>
                     </div>
                 </div>
@@ -206,28 +206,28 @@
 
             <!-- Statistics -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" data-aos="fade-up" data-aos-delay="800">
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 text-center">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 text-center">
                     <div class="text-3xl sm:text-4xl font-bold text-blue-400 mb-2">100K+</div>
-                    <div class="text-white/60 text-sm">{{ translations.active_users }}</div>
+                    <div class="text-gray-900/60 text-sm">{{ translations.active_users }}</div>
                 </div>
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 text-center">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 text-center">
                     <div class="text-3xl sm:text-4xl font-bold text-green-400 mb-2">50+</div>
-                    <div class="text-white/60 text-sm">{{ translations.cryptocurrencies }}</div>
+                    <div class="text-gray-900/60 text-sm">{{ translations.cryptocurrencies }}</div>
                 </div>
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 text-center">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 text-center">
                     <div class="text-3xl sm:text-4xl font-bold text-purple-400 mb-2">$2B+</div>
-                    <div class="text-white/60 text-sm">{{ translations.trading_volume }}</div>
+                    <div class="text-gray-900/60 text-sm">{{ translations.trading_volume }}</div>
                 </div>
-                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 text-center">
+                <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 text-center">
                     <div class="text-3xl sm:text-4xl font-bold text-orange-400 mb-2">150+</div>
-                    <div class="text-white/60 text-sm">{{ translations.countries }}</div>
+                    <div class="text-gray-900/60 text-sm">{{ translations.countries }}</div>
                 </div>
             </div>
 
             <!-- CTA Section -->
-            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 sm:p-8 text-center" data-aos="fade-up" data-aos-delay="900">
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 sm:p-8 text-center" data-aos="fade-up" data-aos-delay="900">
                 <h2 class="text-2xl sm:text-3xl font-bold mb-3">{{ translations.ready_to_start }}</h2>
-                <p class="text-white/70 mb-6 max-w-2xl mx-auto">{{ translations.ready_to_start_desc }}</p>
+                <p class="text-gray-900/70 mb-6 max-w-2xl mx-auto">{{ translations.ready_to_start_desc }}</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{% url 'dashboard' %}" class="px-6 py-3 bg-primary rounded-xl font-semibold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
                         <span>{{ translations.go_to_dashboard }}</span>
@@ -235,7 +235,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>
                     </a>
-                    <a href="{% url 'contact_support' %}" class="px-6 py-3 bg-white/5 border border-white/10 rounded-xl font-semibold hover:bg-white/10 transition-all inline-flex items-center justify-center gap-2">
+                    <a href="{% url 'contact_support' %}" class="px-6 py-3 bg-white/5 border border-gray-200 rounded-xl font-semibold hover:bg-gray-100 transition-all inline-flex items-center justify-center gap-2">
                         <span>{{ translations.contact_us }}</span>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -249,27 +249,27 @@
     {% include 'partials/dashboard_footer.html' %}
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-200 z-50 pb-safe">
         <div class="grid grid-cols-4 gap-1 px-2 py-3">
-            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
                 <span class="text-xs">Home</span>
             </a>
-            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
                 <span class="text-xs">Portfolio</span>
             </a>
-            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
                 <span class="text-xs">Explore</span>
             </a>
-            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>

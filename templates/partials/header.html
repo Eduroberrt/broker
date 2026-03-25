@@ -22,8 +22,7 @@
             {% include 'partials/language_switcher.html' %}
             
             {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="hidden lg:block text-white hover:text-[#bd24df] px-6 py-3 rounded-lg">Dashboard</a>
-                <a href="{% url 'logout' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #2d6ade, #bd24df);">{{ translations.logout }}</a>
+                <a href="{% url 'dashboard' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #bd24df, #2d6ade);">Dashboard</a>
             {% else %}
                 <a href="{% url 'signin' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #bd24df, #2d6ade);">{{ translations.sign_in }}</a>
                 <a href="{% url 'signup' %}" class="hidden lg:block text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-90" style="background: linear-gradient(to right, #2d6ade, #bd24df);">{{ translations.sign_up }}</a>
@@ -61,8 +60,7 @@
             
             <div class="mt-4 flex flex-col space-y-4 w-full">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="bg-transparent border border-[#bd24df] text-[#bd24df] px-4 py-2 rounded-lg hover:bg-[#bd24df] hover:text-white text-center">Dashboard</a>
-                    <a href="{% url 'logout' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-transparent border border-[#bd24df] hover:text-[#bd24df] text-center">{{ translations.logout }}</a>
+                    <a href="{% url 'dashboard' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-transparent border border-[#bd24df] hover:text-[#bd24df] text-center">Dashboard</a>
                 {% else %}
                     <a href="{% url 'signin' %}" class="bg-transparent border border-[#bd24df] text-[#bd24df] px-4 py-2 rounded-lg hover:bg-[#bd24df] hover:text-white text-center">{{ translations.sign_in }}</a>
                     <a href="{% url 'signup' %}" class="bg-[#bd24df] text-white px-4 py-2 rounded-lg hover:bg-transparent border border-[#bd24df] hover:text-[#bd24df] text-center">{{ translations.sign_up }}</a>

@@ -19,7 +19,7 @@
     </script>
     <style>
         body {
-            background: linear-gradient(135deg, #0c1b44 0%, #1a2456 100%);
+            background: white;
             min-height: 100vh;
         }
         .scrollbar-hide::-webkit-scrollbar {
@@ -81,25 +81,25 @@
         }
     </style>
 </head>
-<body class="text-white">
+<body class="text-gray-900">
     {% include 'partials/dashboard_header.html' %}
 
     <div class="container mx-auto px-4 sm:px-6 pt-24 pb-32">
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold mb-2">Explore Markets</h1>
-            <p class="text-white/60">Discover trending cryptocurrencies and market opportunities</p>
+            <p class="text-gray-900/60">Discover trending cryptocurrencies and market opportunities</p>
         </div>
 
         <!-- Search Bar -->
         <div class="mb-8">
             <div class="relative">
                 <input type="text" id="searchInput" placeholder="Search cryptocurrencies..." 
-                    class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pl-12 text-white placeholder-white/40 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
-                <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pl-12 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all">
+                <svg class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-900/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
-                <div id="resultCount" class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-white/60 hidden">
+                <div id="resultCount" class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-900/60 hidden">
                     <span id="countText"></span>
                 </div>
             </div>
@@ -109,12 +109,12 @@
         <div class="mb-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide">
                 <button onclick="filterCategory('all')" data-category="all" class="filter-tab px-5 py-2.5 bg-purple-600 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">All</button>
-                <button onclick="filterCategory('favorites')" data-category="favorites" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Favorites ⭐</button>
-                <button onclick="filterCategory('trending')" data-category="trending" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Trending 🔥</button>
-                <button onclick="filterCategory('gainers')" data-category="gainers" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Gainers 📈</button>
-                <button onclick="filterCategory('losers')" data-category="losers" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Losers 📉</button>
-                <button onclick="filterCategory('defi')" data-category="defi" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">DeFi 🏦</button>
-                <button onclick="filterCategory('nft')" data-category="nft" class="filter-tab px-5 py-2.5 bg-white/10 hover:bg-white/20 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">NFT 🎨</button>
+                <button onclick="filterCategory('favorites')" data-category="favorites" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Favorites ⭐</button>
+                <button onclick="filterCategory('trending')" data-category="trending" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Trending 🔥</button>
+                <button onclick="filterCategory('gainers')" data-category="gainers" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Gainers 📈</button>
+                <button onclick="filterCategory('losers')" data-category="losers" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Losers 📉</button>
+                <button onclick="filterCategory('defi')" data-category="defi" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">DeFi 🏦</button>
+                <button onclick="filterCategory('nft')" data-category="nft" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">NFT 🎨</button>
             </div>
         </div>
 
@@ -122,7 +122,7 @@
         <div class="grid md:grid-cols-3 gap-6 mb-8">
             <div class="bg-gradient-to-br from-green-500/20 to-green-700/20 border border-green-500/30 rounded-xl p-6">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-white/80">Market Cap</span>
+                    <span class="text-gray-900/80">Market Cap</span>
                     <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                     </svg>
@@ -132,7 +132,7 @@
             </div>
             <div class="bg-gradient-to-br from-blue-500/20 to-blue-700/20 border border-blue-500/30 rounded-xl p-6">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-white/80">24h Volume</span>
+                    <span class="text-gray-900/80">24h Volume</span>
                     <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
@@ -142,7 +142,7 @@
             </div>
             <div class="bg-gradient-to-br from-purple-500/20 to-purple-700/20 border border-purple-500/30 rounded-xl p-6">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-white/80">BTC Dominance</span>
+                    <span class="text-gray-900/80">BTC Dominance</span>
                     <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
@@ -154,24 +154,24 @@
         </div>
 
         <!-- Cryptocurrency List -->
-        <div class="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden">
+        <div class="bg-gray-50 backdrop-blur-lg rounded-2xl border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto lg:overflow-x-visible">
                 <table class="w-full">
                     <thead>
-                        <tr class="border-b border-white/10">
-                            <th class="text-left p-4 text-white/60 font-semibold">#</th>
-                            <th class="text-left p-4 text-white/60 font-semibold">Asset</th>
-                            <th class="text-right p-4 text-white/60 font-semibold">Price</th>
-                            <th class="text-right p-4 text-white/60 font-semibold hidden sm:table-cell">24h %</th>
-                            <th class="text-right p-4 text-white/60 font-semibold hidden md:table-cell">7d %</th>
-                            <th class="text-right p-4 text-white/60 font-semibold hidden lg:table-cell">Market Cap</th>
-                            <th class="text-right p-4 text-white/60 font-semibold hidden lg:table-cell">Volume (24h)</th>
-                            <th class="text-right p-4 text-white/60 font-semibold">Action</th>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left p-4 text-gray-900/60 font-semibold">#</th>
+                            <th class="text-left p-4 text-gray-900/60 font-semibold">Asset</th>
+                            <th class="text-right p-4 text-gray-900/60 font-semibold">Price</th>
+                            <th class="text-right p-4 text-gray-900/60 font-semibold hidden sm:table-cell">24h %</th>
+                            <th class="text-right p-4 text-gray-900/60 font-semibold hidden md:table-cell">7d %</th>
+                            <th class="text-right p-4 text-gray-900/60 font-semibold hidden lg:table-cell">Market Cap</th>
+                            <th class="text-right p-4 text-gray-900/60 font-semibold hidden lg:table-cell">Volume (24h)</th>
+                            <th class="text-right p-4 text-gray-900/60 font-semibold">Action</th>
                         </tr>
                     </thead>
                     <tbody id="cryptoList">
                         {% for asset in crypto_assets %}
-                        <tr class="crypto-row border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer" 
+                        <tr class="crypto-row border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer" 
                             data-categories="{{ asset.categories }}" 
                             data-name="{{ asset.name }}" 
                             data-symbol="{{ asset.symbol }}"
@@ -184,7 +184,7 @@
                             data-color="{{ asset.color }}"
                             data-icon="{{ asset.icon }}"
                             onclick="openAssetModal(this)">
-                            <td class="p-4 text-white/60">{{ forloop.counter }}</td>
+                            <td class="p-4 text-gray-900/60">{{ forloop.counter }}</td>
                             <td class="p-4">
                                 <div class="flex items-center gap-3">
                                     {% if asset.icon_url %}
@@ -192,13 +192,13 @@
                                         <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-full h-full object-contain">
                                     </div>
                                     {% else %}
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0" style="background-color: {{ asset.color }};">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-gray-900 font-bold flex-shrink-0" style="background-color: {{ asset.color }};">
                                         {{ asset.icon }}
                                     </div>
                                     {% endif %}
                                     <div>
                                         <p class="font-semibold">{{ asset.name }}</p>
-                                        <p class="text-sm text-white/60">{{ asset.symbol }}</p>
+                                        <p class="text-sm text-gray-900/60">{{ asset.symbol }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -223,8 +223,8 @@
                             <td class="p-4 text-right hidden md:table-cell">
                                 <span class="text-green-400">+{{ asset.week_change|floatformat:2 }}%</span>
                             </td>
-                            <td class="p-4 text-right hidden lg:table-cell text-white/80">${{ asset.market_cap|floatformat:0 }}B</td>
-                            <td class="p-4 text-right hidden lg:table-cell text-white/80">${{ asset.volume_24h|floatformat:0 }}M</td>
+                            <td class="p-4 text-right hidden lg:table-cell text-gray-900/80">${{ asset.market_cap|floatformat:0 }}B</td>
+                            <td class="p-4 text-right hidden lg:table-cell text-gray-900/80">${{ asset.volume_24h|floatformat:0 }}M</td>
                             <td class="p-4 text-right">
                                 <button class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-semibold transition-colors">
                                     Trade
@@ -242,7 +242,7 @@
             <h2 class="text-2xl font-bold mb-6">Trending Now 🔥</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {% for trending in trending_assets %}
-                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-all cursor-pointer hover:scale-105"
+                <div class="bg-gray-50 backdrop-blur-lg border border-gray-200 rounded-xl p-5 hover:bg-gray-100 transition-all cursor-pointer hover:scale-105"
                     data-name="{{ trending.name }}"
                     data-symbol="{{ trending.symbol }}"
                     data-price="{{ trending.formatted_price }}"
@@ -258,13 +258,13 @@
                             <img src="{{ trending.icon_url }}" alt="{{ trending.name }}" class="w-full h-full object-contain">
                         </div>
                         {% else %}
-                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style="background-color: {{ trending.color }};">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-gray-900 font-bold" style="background-color: {{ trending.color }};">
                             {{ trending.icon }}
                         </div>
                         {% endif %}
                         <div>
                             <p class="font-semibold">{{ trending.name }}</p>
-                            <p class="text-sm text-white/60">{{ trending.symbol }}</p>
+                            <p class="text-sm text-gray-900/60">{{ trending.symbol }}</p>
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
@@ -283,16 +283,16 @@
 
     <!-- Asset Detail Modal -->
     <div id="assetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-gradient-to-br from-darkmode to-[#1a2456] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl animate-modal">
-            <div class="sticky top-0 bg-gradient-to-br from-darkmode to-[#1a2456] border-b border-white/10 p-6 flex items-center justify-between z-10">
+        <div class="bg-gradient-to-br from-darkmode to-[#1a2456] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl animate-modal">
+            <div class="sticky top-0 bg-gradient-to-br from-darkmode to-[#1a2456] border-b border-gray-200 p-6 flex items-center justify-between z-10">
                 <div class="flex items-center gap-4">
                     <div id="modalIcon" class="w-16 h-16 rounded-full flex items-center justify-center"></div>
                     <div>
                         <h3 id="modalName" class="text-2xl font-bold"></h3>
-                        <p id="modalSymbol" class="text-white/60"></p>
+                        <p id="modalSymbol" class="text-gray-900/60"></p>
                     </div>
                 </div>
-                <button onclick="closeAssetModal()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                <button onclick="closeAssetModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -301,8 +301,8 @@
 
             <div class="p-6 space-y-6">
                 <!-- Price Section -->
-                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
-                    <p class="text-white/60 text-sm mb-2">Current Price</p>
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <p class="text-gray-900/60 text-sm mb-2">Current Price</p>
                     <div class="flex items-end gap-4">
                         <h2 id="modalPrice" class="text-4xl font-bold"></h2>
                         <div id="modalChange" class="flex items-center gap-1 mb-2"></div>
@@ -311,26 +311,26 @@
 
                 <!-- Stats Grid -->
                 <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <p class="text-white/60 text-sm mb-1">24h Change</p>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-900/60 text-sm mb-1">24h Change</p>
                         <p id="modal24h" class="text-xl font-semibold"></p>
                     </div>
-                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <p class="text-white/60 text-sm mb-1">7d Change</p>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-900/60 text-sm mb-1">7d Change</p>
                         <p id="modal7d" class="text-xl font-semibold"></p>
                     </div>
-                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <p class="text-white/60 text-sm mb-1">Market Cap</p>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-900/60 text-sm mb-1">Market Cap</p>
                         <p id="modalMarketCap" class="text-xl font-semibold"></p>
                     </div>
-                    <div class="bg-white/5 rounded-xl p-4 border border-white/10">
-                        <p class="text-white/60 text-sm mb-1">24h Volume</p>
+                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                        <p class="text-gray-900/60 text-sm mb-1">24h Volume</p>
                         <p id="modalVolume" class="text-xl font-semibold"></p>
                     </div>
                 </div>
 
                 <!-- Price Chart Placeholder -->
-                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <h4 class="text-lg font-semibold mb-4">Price Chart (7 Days)</h4>
                     <div class="h-48 flex items-center justify-center">
                         <canvas id="assetChart"></canvas>
@@ -358,7 +358,7 @@
                         </svg>
                         <div>
                             <p class="font-semibold mb-1">About this asset</p>
-                            <p class="text-sm text-white/80" id="modalDescription">
+                            <p class="text-sm text-gray-900/80" id="modalDescription">
                                 Track real-time prices and market data. Use the action buttons above to trade this cryptocurrency on our platform.
                             </p>
                         </div>
@@ -369,15 +369,15 @@
     </div>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-200 z-50 pb-safe">
         <div class="grid grid-cols-4 gap-1 px-2 py-3">
-            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
                 <span class="text-xs">Home</span>
             </a>
-            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
@@ -389,7 +389,7 @@
                 </svg>
                 <span class="text-xs">Explore</span>
             </a>
-            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
@@ -429,7 +429,7 @@
                 modalIcon.innerHTML = `<img src="${iconUrl}" alt="${name}" class="w-full h-full object-contain p-2 bg-white rounded-full">`;
             } else {
                 modalIcon.style.backgroundColor = color;
-                modalIcon.innerHTML = `<span class="text-white font-bold text-xl">${icon}</span>`;
+                modalIcon.innerHTML = `<span class="text-gray-900 font-bold text-xl">${icon}</span>`;
             }
 
             // Update change indicators
@@ -590,11 +590,11 @@
             // Update active tab styling
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 if (tab.dataset.category === category) {
-                    tab.classList.remove('bg-white/10', 'hover:bg-white/20');
+                    tab.classList.remove('bg-gray-100', 'hover:bg-gray-200');
                     tab.classList.add('bg-purple-600');
                 } else {
                     tab.classList.remove('bg-purple-600');
-                    tab.classList.add('bg-white/10', 'hover:bg-white/20');
+                    tab.classList.add('bg-gray-100', 'hover:bg-gray-200');
                 }
             });
         }
@@ -652,11 +652,11 @@
                     noResultsRow.innerHTML = `
                         <td colspan="8" class="p-8 text-center">
                             <div class="flex flex-col items-center gap-3">
-                                <svg class="w-16 h-16 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-16 h-16 text-gray-900/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <p class="text-white/60 text-lg">No cryptocurrencies found</p>
-                                <p class="text-white/40 text-sm">Try adjusting your filters or search term</p>
+                                <p class="text-gray-900/60 text-lg">No cryptocurrencies found</p>
+                                <p class="text-gray-900/40 text-sm">Try adjusting your filters or search term</p>
                             </div>
                         </td>
                     `;

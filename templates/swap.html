@@ -41,46 +41,46 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body class="bg-body-bg">
+<body class="bg-white">
     {% include 'partials/dashboard_header.html' %}
     
-    <section class="relative pt-24 pb-24 lg:pb-20 min-h-screen z-10" style="background: #040D26;">
+    <section class="relative pt-24 pb-24 lg:pb-20 min-h-screen z-10 bg-white">
         <div class="container px-4 max-w-2xl mx-auto relative z-10">
             <div class="mb-8">
-                <h1 class="text-2xl sm:text-4xl font-bold text-white mb-2 flex items-center gap-3" data-aos="fade-up">
+                <h1 class="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3" data-aos="fade-up">
                     <svg class="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
                     </svg>
                     {{ translations.swap_crypto }}
                 </h1>
-                <p class="text-sm sm:text-base text-lightpurple">{{ translations.swap_crypto_description }}</p>
+                <p class="text-sm sm:text-base text-gray-600">{{ translations.swap_crypto_description }}</p>
             </div>
             
             <!-- Swap Form -->
-            <div class="rounded-lg p-6 border border-white/20" style="background: rgba(12, 27, 68, 0.8);" data-aos="fade-up">
+            <div class="rounded-lg p-6 border border-gray-300" class="bg-gray-50" data-aos="fade-up">
                 <form id="swap-form" class="space-y-4">
                     {% csrf_token %}
                     <!-- From Section -->
                     <div>
-                        <label class="block text-white mb-2 font-semibold">{{ translations.from }}</label>
-                        <div class="bg-tablebg rounded-lg p-4 border border-white/10">
+                        <label class="block text-gray-900 mb-2 font-semibold">{{ translations.from }}</label>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
                             <div class="flex items-center justify-between mb-3">
-                                <select id="from-crypto" class="bg-transparent text-white text-lg font-semibold focus:outline-none">
+                                <select id="from-crypto" class="bg-transparent text-gray-900 text-lg font-semibold focus:outline-none">
                                     {% for asset in crypto_assets %}
                                     <option value="{{ asset.symbol }}" data-price="{{ asset.current_price }}">{{ asset.symbol }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="number" step="0.00000001" placeholder="0.00" class="bg-transparent text-white text-2xl font-bold text-right focus:outline-none w-full ml-4" id="from-amount">
+                                <input type="number" step="0.00000001" placeholder="0.00" class="bg-transparent text-gray-900 text-2xl font-bold text-right focus:outline-none w-full ml-4" id="from-amount">
                             </div>
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-white/60">Available: <span class="text-white" id="from-available">0.00000000</span> <span id="from-symbol">BTC</span></span>
+                                <span class="text-gray-900/60">Available: <span class="text-gray-900" id="from-available">0.00000000</span> <span id="from-symbol">BTC</span></span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Swap Button -->
                     <div class="flex justify-center -my-2">
-                        <button type="button" id="swap-direction" class="bg-darkmode border-4 border-body-bg rounded-full p-3 text-primary hover:rotate-180 transition-transform duration-300">
+                        <button type="button" id="swap-direction" class="bg-gray-50 border-4 border-body-bg rounded-full p-3 text-primary hover:rotate-180 transition-transform duration-300">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
                             </svg>
@@ -89,24 +89,24 @@
                     
                     <!-- To Section -->
                     <div>
-                        <label class="block text-white mb-2 font-semibold">{{ translations.to }}</label>
-                        <div class="bg-tablebg rounded-lg p-4 border border-white/10">
+                        <label class="block text-gray-900 mb-2 font-semibold">{{ translations.to }}</label>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
                             <div class="flex items-center justify-between mb-3">
-                                <select id="to-crypto" class="bg-transparent text-white text-lg font-semibold focus:outline-none">
+                                <select id="to-crypto" class="bg-transparent text-gray-900 text-lg font-semibold focus:outline-none">
                                     {% for asset in crypto_assets %}
                                     <option value="{{ asset.symbol }}" data-price="{{ asset.current_price }}" {% if forloop.counter == 2 %}selected{% endif %}>{{ asset.symbol }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="text" placeholder="0.00" readonly class="bg-transparent text-white text-2xl font-bold text-right focus:outline-none w-full ml-4" id="to-amount" value="0.00">
+                                <input type="text" placeholder="0.00" readonly class="bg-transparent text-gray-900 text-2xl font-bold text-right focus:outline-none w-full ml-4" id="to-amount" value="0.00">
                             </div>
                             <div class="flex items-center justify-between text-sm">
-                                <span class="text-white/60" id="to-usd-value">≈ $0.00 USD</span>
+                                <span class="text-gray-900/60" id="to-usd-value">≈ $0.00 USD</span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Swap Button -->
-                    <button type="submit" class="w-full py-4 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                    <button type="submit" class="w-full py-4 text-gray-900 font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
                         Swap Crypto
                     </button>
                 </form>
@@ -116,51 +116,51 @@
 
     <!-- Processing Modal -->
     <div id="processing-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div class="bg-darkmode rounded-lg p-8 max-w-sm mx-4 border border-white/10 text-center">
-            <div class="w-16 h-16 border-4 border-white/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-            <h3 class="text-white text-xl font-semibold mb-2">Processing...</h3>
-            <p class="text-white/60 text-sm">Swapping your crypto</p>
+        <div class="bg-gray-50 rounded-lg p-8 max-w-sm mx-4 border border-gray-200 text-center">
+            <div class="w-16 h-16 border-4 border-gray-300 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+            <h3 class="text-gray-900 text-xl font-semibold mb-2">Processing...</h3>
+            <p class="text-gray-900/60 text-sm">Swapping your crypto</p>
         </div>
     </div>
 
     <!-- Success Modal -->
     <div id="success-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div class="bg-darkmode rounded-lg p-8 max-w-sm mx-4 border border-white/10 text-center">
+        <div class="bg-gray-50 rounded-lg p-8 max-w-sm mx-4 border border-gray-200 text-center">
             <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <h3 class="text-white text-xl font-semibold mb-2">Swap Successful!</h3>
-            <p class="text-white/60 text-sm mb-6">Your cryptocurrency has been swapped successfully.</p>
-            <button onclick="closeSuccessModal()" class="w-full py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+            <h3 class="text-gray-900 text-xl font-semibold mb-2">Swap Successful!</h3>
+            <p class="text-gray-900/60 text-sm mb-6">Your cryptocurrency has been swapped successfully.</p>
+            <button onclick="closeSuccessModal()" class="w-full py-3 text-gray-900 font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
                 OK
             </button>
         </div>
     </div>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-200 z-50 pb-safe">
         <div class="grid grid-cols-4 gap-1 px-2 py-3">
-            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
                 <span class="text-xs">Home</span>
             </a>
-            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
                 <span class="text-xs">Portfolio</span>
             </a>
-            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
                 <span class="text-xs">Explore</span>
             </a>
-            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>

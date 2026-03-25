@@ -40,7 +40,7 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
-<body class="bg-body-bg text-white">
+<body class="bg-white">
     {% include 'partials/dashboard_header.html' %}
 
     <div class="container mx-auto px-4 sm:px-6 pt-20 pb-24 lg:pb-20 min-h-screen" style="background: #040D26;">
@@ -52,14 +52,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-white">{{ translations.contact_support_title }}</h1>
-                <p class="text-white/60 text-sm sm:text-base max-w-2xl mx-auto">{{ translations.contact_support_description }}</p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 text-gray-900">{{ translations.contact_support_title }}</h1>
+                <p class="text-gray-900/60 text-sm sm:text-base max-w-2xl mx-auto">{{ translations.contact_support_description }}</p>
             </div>
         </div>
 
         <div class="max-w-4xl mx-auto">
             <!-- Contact Form -->
-            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-white/10 p-6 sm:p-8" data-aos="fade-up" data-aos-delay="400">
+            <div class="bg-white/5 backdrop-blur-lg rounded-xl sm:rounded-2xl border border-gray-200 p-6 sm:p-8" data-aos="fade-up" data-aos-delay="400">
                 {% if messages %}
                     {% for message in messages %}
                         <div class="mb-6 p-4 rounded-xl {% if message.tags == 'success' %}bg-green-600/20 border border-green-600/30 text-green-400{% else %}bg-red-600/20 border border-red-600/30 text-red-400{% endif %}">
@@ -86,38 +86,38 @@
                         <!-- Name -->
                         <div>
                             <label for="name" class="block text-sm font-medium mb-2">{{ translations.full_name }} <span class="text-red-400">*</span></label>
-                            <input type="text" id="name" name="name" required value="{{ request.user.get_full_name }}" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-primary transition-all">
+                            <input type="text" id="name" name="name" required value="{{ request.user.get_full_name }}" class="w-full px-4 py-3 bg-white/5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary transition-all">
                         </div>
 
                         <!-- Email -->
                         <div>
                             <label for="email" class="block text-sm font-medium mb-2">{{ translations.email_address }} <span class="text-red-400">*</span></label>
-                            <input type="email" id="email" name="email" required value="{{ request.user.email }}" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-primary transition-all">
+                            <input type="email" id="email" name="email" required value="{{ request.user.email }}" class="w-full px-4 py-3 bg-white/5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary transition-all">
                         </div>
                     </div>
 
                     <!-- Subject -->
                     <div>
                         <label for="subject" class="block text-sm font-medium mb-2">{{ translations.subject }} <span class="text-red-400">*</span></label>
-                        <select id="subject" name="subject" required class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-primary transition-all">
-                            <option value="" class="bg-darkmode">{{ translations.select_subject }}</option>
-                            <option value="Account Issues" class="bg-darkmode">{{ translations.subject_account_issues }}</option>
-                            <option value="Transaction Problem" class="bg-darkmode">{{ translations.subject_transaction_problem }}</option>
-                            <option value="Security Concern" class="bg-darkmode">{{ translations.subject_security_concern }}</option>
-                            <option value="Withdrawal Issue" class="bg-darkmode">{{ translations.subject_withdrawal_issue }}</option>
-                            <option value="Deposit Issue" class="bg-darkmode">{{ translations.subject_deposit_issue }}</option>
-                            <option value="Technical Problem" class="bg-darkmode">{{ translations.subject_technical_problem }}</option>
-                            <option value="Feature Request" class="bg-darkmode">{{ translations.subject_feature_request }}</option>
-                            <option value="General Inquiry" class="bg-darkmode">{{ translations.subject_general_inquiry }}</option>
-                            <option value="Other" class="bg-darkmode">{{ translations.subject_other }}</option>
+                        <select id="subject" name="subject" required class="w-full px-4 py-3 bg-white/5 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-primary transition-all">
+                            <option value="" class="bg-gray-50">{{ translations.select_subject }}</option>
+                            <option value="Account Issues" class="bg-gray-50">{{ translations.subject_account_issues }}</option>
+                            <option value="Transaction Problem" class="bg-gray-50">{{ translations.subject_transaction_problem }}</option>
+                            <option value="Security Concern" class="bg-gray-50">{{ translations.subject_security_concern }}</option>
+                            <option value="Withdrawal Issue" class="bg-gray-50">{{ translations.subject_withdrawal_issue }}</option>
+                            <option value="Deposit Issue" class="bg-gray-50">{{ translations.subject_deposit_issue }}</option>
+                            <option value="Technical Problem" class="bg-gray-50">{{ translations.subject_technical_problem }}</option>
+                            <option value="Feature Request" class="bg-gray-50">{{ translations.subject_feature_request }}</option>
+                            <option value="General Inquiry" class="bg-gray-50">{{ translations.subject_general_inquiry }}</option>
+                            <option value="Other" class="bg-gray-50">{{ translations.subject_other }}</option>
                         </select>
                     </div>
 
                     <!-- Message -->
                     <div>
                         <label for="message" class="block text-sm font-medium mb-2">{{ translations.message }} <span class="text-red-400">*</span></label>
-                        <textarea id="message" name="message" required rows="6" placeholder="{{ translations.message_placeholder }}" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-primary transition-all resize-none"></textarea>
-                        <p class="text-white/40 text-xs mt-2">{{ translations.message_note }}</p>
+                        <textarea id="message" name="message" required rows="6" placeholder="{{ translations.message_placeholder }}" class="w-full px-4 py-3 bg-white/5 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary transition-all resize-none"></textarea>
+                        <p class="text-gray-900/40 text-xs mt-2">{{ translations.message_note }}</p>
                     </div>
 
                     <!-- Submit Button -->
@@ -137,27 +137,27 @@
     {% include 'partials/dashboard_footer.html' %}
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-darkmode border-t border-white/10 z-50 pb-safe">
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-200 z-50 pb-safe">
         <div class="grid grid-cols-4 gap-1 px-2 py-3">
-            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
                 <span class="text-xs">Home</span>
             </a>
-            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
                 <span class="text-xs">Portfolio</span>
             </a>
-            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
                 <span class="text-xs">Explore</span>
             </a>
-            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-white/60 hover:text-[#bd24df] transition-colors">
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
