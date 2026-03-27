@@ -174,7 +174,8 @@ class UserHoldingAdmin(admin.ModelAdmin):
     
     def current_value_display(self, obj):
         value = float(obj.current_value)
-        return format_html('<span style="font-weight: bold;">${:,.2f}</span>', value)
+        formatted_value = '${:,.2f}'.format(value)
+        return format_html('<span style="font-weight: bold;">{}</span>', formatted_value)
     current_value_display.short_description = 'Current Value'
     
     def profit_loss_display(self, obj):
@@ -182,9 +183,11 @@ class UserHoldingAdmin(admin.ModelAdmin):
         pl_pct = float(obj.profit_loss_percentage)
         color = 'green' if pl >= 0 else 'red'
         symbol = '▲' if pl >= 0 else '▼'
+        formatted_pl = '${:,.2f}'.format(abs(pl))
+        formatted_pct = '{:+.2f}%'.format(pl_pct)
         return format_html(
-            '<span style="color: {}; font-weight: bold;">{} ${:,.2f} ({:+.2f}%)</span>',
-            color, symbol, abs(pl), pl_pct
+            '<span style="color: {}; font-weight: bold;">{} {} ({})</span>',
+            color, symbol, formatted_pl, formatted_pct
         )
     profit_loss_display.short_description = 'P/L'
 

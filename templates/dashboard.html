@@ -151,8 +151,17 @@
                                 
                                 <div class="text-right">
                                     <p class="text-white font-semibold">{{ asset.formatted_price }}</p>
-                                    <p class="{% if asset.is_positive_change %}text-green-400{% else %}text-red-400{% endif %} text-sm font-medium">
-                                        {% if asset.is_positive_change %}↗{% else %}↘{% endif %}{{ asset.percentage_change|floatformat:2 }}%
+                                    <p class="{% if asset.is_positive_change %}text-green-400{% else %}text-red-400{% endif %} text-sm font-medium flex items-center justify-end gap-1">
+                                        {% if asset.is_positive_change %}
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                        </svg>
+                                        {% else %}
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V4"/>
+                                        </svg>
+                                        {% endif %}
+                                        {{ asset.percentage_change|floatformat:2 }}%
                                     </p>
                                 </div>
                             </a>
@@ -255,8 +264,17 @@
                                 
                                 <div class="text-right">
                                     <p class="text-white font-semibold">{{ asset.formatted_price }}</p>
-                                    <p class="{% if asset.is_positive_change %}text-green-400{% else %}text-red-400{% endif %} text-sm font-medium">
-                                        {% if asset.is_positive_change %}↗{% else %}↘{% endif %}{{ asset.percentage_change|floatformat:2 }}%
+                                    <p class="{% if asset.is_positive_change %}text-green-400{% else %}text-red-400{% endif %} text-sm font-medium flex items-center justify-end gap-1">
+                                        {% if asset.is_positive_change %}
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                        </svg>
+                                        {% else %}
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V4"/>
+                                        </svg>
+                                        {% endif %}
+                                        {{ asset.percentage_change|floatformat:2 }}%
                                     </p>
                                 </div>
                             </a>
