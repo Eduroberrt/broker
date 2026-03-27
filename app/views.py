@@ -97,7 +97,12 @@ def signup_view(request):
 def dashboard(request):
     """Dashboard view - requires authentication"""
     # Get all crypto assets from database
-    crypto_assets = CryptoAsset.objects.all()
+    all_assets = CryptoAsset.objects.all()
+    
+    # Separate assets by type
+    watchlist_assets = all_assets.filter(is_in_watchlist=True)
+    crypto_assets = all_assets.filter(asset_type='crypto')
+    stock_assets = all_assets.filter(asset_type='stock')
     
     # Get user's wallet balances
     user_wallets = UserWallet.objects.filter(user=request.user).select_related('crypto_asset')
@@ -108,11 +113,28 @@ def dashboard(request):
     # Calculate total wallet value (balance is already in USD)
     total_balance = sum(wallet.balance for wallet in user_wallets)
     
+    # Calculate total gain/loss
+    total_base_value = Decimal('0')
+    for wallet in user_wallets:
+        if wallet.balance > 0:
+            asset = wallet.crypto_asset
+            crypto_amount = wallet.balance / asset.current_price if asset.current_price > 0 else Decimal('0')
+            total_base_value += crypto_amount * asset.base_price
+    
+    total_gain = float(total_balance - total_base_value)
+    total_gain_percentage = (total_gain / float(total_base_value) * 100) if total_base_value > 0 else 0
+    is_total_profit = total_gain >= 0
+    
     context = {
         'current_year': datetime.now().year,
+        'watchlist_assets': watchlist_assets,
         'crypto_assets': crypto_assets,
+        'stock_assets': stock_assets,
         'wallet_dict': wallet_dict,
         'total_balance': total_balance,
+        'total_gain': total_gain,
+        'total_gain_percentage': total_gain_percentage,
+        'is_total_profit': is_total_profit,
     }
     return render(request, 'dashboard.html', context)
 
@@ -142,7 +164,6 @@ def receive_view(request):
             try:
                 crypto_asset = CryptoAsset.objects.get(symbol=crypto_symbol)
                 
-                # Create receive transaction
                 transaction = ReceiveTransaction.objects.create(
                     user=request.user,
                     crypto_asset=crypto_asset,
@@ -185,20 +206,16 @@ def swap_view(request):
             to_crypto = CryptoAsset.objects.get(symbol=to_symbol)
             from_amount_usd = Decimal(from_amount_usd)
             
-            # Get user's wallet for FROM crypto
             from_wallet = UserWallet.objects.filter(user=request.user, crypto_asset=from_crypto).first()
             
             if not from_wallet or from_wallet.balance < from_amount_usd:
                 return JsonResponse({'success': False, 'message': 'Insufficient balance'})
             
-            # Calculate TO amount (same USD value)
             to_amount_usd = from_amount_usd
             
-            # Deduct from FROM wallet
             from_wallet.balance -= from_amount_usd
             from_wallet.save()
             
-            # Add to TO wallet
             to_wallet, created = UserWallet.objects.get_or_create(
                 user=request.user,
                 crypto_asset=to_crypto
@@ -470,10 +487,8 @@ def portfolio_view(request):
                 'base_price': float(asset.base_price),
             })
     
-    # Sort holdings by value (highest first)
     holdings.sort(key=lambda x: x['value'], reverse=True)
     
-    # Calculate top holdings for allocation (top 5)
     top_holdings = []
     for holding in holdings[:5]:
         holding_copy = holding.copy()
@@ -481,10 +496,8 @@ def portfolio_view(request):
         holding_copy['portfolio_value'] = holding['value']
         top_holdings.append(holding_copy)
     
-    # Calculate overall gains based on base price
     total_base_value = Decimal('0')
     for holding in holdings:
-        # Calculate what the value would have been at base price
         crypto_amount = Decimal(str(holding['balance']))
         base_price = Decimal(str(holding['base_price']))
         total_base_value += crypto_amount * base_price
@@ -492,7 +505,6 @@ def portfolio_view(request):
     total_gain = float(total_value - total_base_value)
     total_gain_percentage = (total_gain / float(total_base_value) * 100) if total_base_value > 0 else 0
     
-    # Find best and worst performers
     if holdings:
         best_performer = max(holdings, key=lambda x: x['percentage_change'])
         worst_performer = min(holdings, key=lambda x: x['percentage_change'])
@@ -500,7 +512,6 @@ def portfolio_view(request):
         best_performer = None
         worst_performer = None
     
-    # Performance data for different timeframes
     current_value = float(total_value)
     base_value = float(total_base_value)
     
@@ -715,3 +726,87 @@ def about_view(request):
         'current_year': datetime.now().year,
     }
     return render(request, 'about.html', context)
+
+
+@login_required
+def asset_detail_view(request, symbol):
+    """Asset detail page view"""
+    from django.shortcuts import get_object_or_404
+    from itertools import chain
+    from operator import attrgetter
+    
+    asset = get_object_or_404(CryptoAsset, symbol=symbol)
+    
+    # Get user's wallet for this asset
+    user_wallet = UserWallet.objects.filter(user=request.user, crypto_asset=asset).first()
+    user_balance_usd = float(user_wallet.balance) if user_wallet else 0
+    
+    # Calculate crypto amount from USD balance
+    crypto_amount = user_balance_usd / float(asset.current_price) if asset.current_price > 0 else 0
+    
+    # Get all transactions for this asset
+    receive_txs = ReceiveTransaction.objects.filter(
+        user=request.user, 
+        crypto_asset=asset,
+        status='confirmed'
+    ).select_related('crypto_asset')
+    
+    sell_txs = SellTransaction.objects.filter(
+        user=request.user, 
+        crypto_asset=asset,
+        status='confirmed'
+    ).select_related('crypto_asset')
+    
+    # Swap transactions (both from and to this asset)
+    swap_from_txs = SwapTransaction.objects.filter(
+        user=request.user,
+        from_crypto=asset
+    ).select_related('from_crypto', 'to_crypto')
+    
+    swap_to_txs = SwapTransaction.objects.filter(
+        user=request.user,
+        to_crypto=asset
+    ).select_related('from_crypto', 'to_crypto')
+    
+    # Combine and sort all transactions by date, adding type info
+    transactions_list = []
+    
+    for tx in receive_txs:
+        transactions_list.append({
+            'type': 'receive',
+            'data': tx,
+            'created_at': tx.created_at
+        })
+    
+    for tx in sell_txs:
+        transactions_list.append({
+            'type': 'sell',
+            'data': tx,
+            'created_at': tx.created_at
+        })
+    
+    for tx in swap_from_txs:
+        transactions_list.append({
+            'type': 'swap_from',
+            'data': tx,
+            'created_at': tx.created_at
+        })
+    
+    for tx in swap_to_txs:
+        transactions_list.append({
+            'type': 'swap_to',
+            'data': tx,
+            'created_at': tx.created_at
+        })
+    
+    # Sort by date
+    all_transactions = sorted(transactions_list, key=lambda x: x['created_at'], reverse=True)
+    
+    context = {
+        'current_year': datetime.now().year,
+        'asset': asset,
+        'user_balance_usd': user_balance_usd,
+        'crypto_amount': crypto_amount,
+        'transactions': all_transactions,
+    }
+    return render(request, 'asset_detail.html', context)

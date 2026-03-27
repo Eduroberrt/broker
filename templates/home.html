@@ -5,7 +5,7 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="relative pb-0" id="home-section">
+<section class="relative pb-0" id="home-section" style="background: #040D26;">
     <div class="absolute w-full h-full top-0 blur-effect" style="background: linear-gradient(90deg, rgba(189, 36, 223, 0.5), rgba(45, 106, 222, 0.5) 97.15%);"></div>
     <div class="overflow-hidden">
         <div class="container lg:pt-20 pt-10 relative">
@@ -43,27 +43,12 @@
     </div>
 </section>
 
-<!-- Companies Section -->
-<section class="border-none -my-2 pt-0 bg-white">
-    <div class="container">
-        <div class="companies-slider">
-            <div><img src="{% static 'images/companies/birdseye.svg' %}" alt="Birdseye" class="w-auto mx-auto"></div>
-            <div><img src="{% static 'images/companies/break.svg' %}" alt="Break" class="w-auto mx-auto"></div>
-            <div><img src="{% static 'images/companies/keddar.svg' %}" alt="Keddar" class="w-auto mx-auto"></div>
-            <div><img src="{% static 'images/companies/shield.svg' %}" alt="Shield" class="w-auto mx-auto"></div>
-            <div><img src="{% static 'images/companies/tandov.svg' %}" alt="Tandov" class="w-auto mx-auto"></div>
-            <div><img src="{% static 'images/companies/tree.svg' %}" alt="Tree" class="w-auto mx-auto"></div>
-        </div>
-    </div>
-</section>
-
 <!-- How It Works Section -->
-<section class="relative bg-white" id="how-it-works">
-    <div class="absolute w-full h-full right-auto blur-effect" style="background: linear-gradient(90deg, rgba(189, 36, 223, 0.5), rgba(45, 106, 222, 0.5) 97.15%);"></div>
+<section class="bg-white" id="how-it-works">
     <div class="container">
         <div class="text-center mb-14">
-            <h2 class="mb-3 capitalize text-lightsky sm:text-5xl text-4xl font-bold">How It Works</h2>
-            <p class="text-lightpurple max-w-2xl mx-auto md:text-lg font-normal md:leading-8 capitalize">
+            <h2 class="mb-3 capitalize text-gray-900 sm:text-5xl text-4xl font-bold">How It Works</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto md:text-lg font-normal md:leading-8 capitalize">
                 Getting started with crypto is simple. Create an account, verify your identity, and start buying, selling, or accepting digital currencies in just a few clicks — all on a secure and intuitive platform.
             </p>
         </div>
@@ -169,16 +154,15 @@
 </section>
 
 <!-- Features Section -->
-<section id="features-section" class="scroll-mt-20 bg-body-bg">
+<section id="features-section" class="scroll-mt-20 bg-white">
     <div class="container relative">
-        <div class="absolute w-full h-full top-0 -left-1/4 blur-effect" style="background: linear-gradient(to right, #bd24df, #2d6ade);"></div>
         <div class="gap-x-4 gap-y-4 relative z-10">
             <div class="mb-10">
                 <p class="text-[#bd24df] text-base sm:text-lg font-semibold mb-4 text-center">{{ translations.features_heading }}</p>
-                <h2 class="font-semibold mb-6 text-center max-w-2xl mx-auto sm:leading-14 capitalize text-lightsky sm:text-5xl text-4xl">
+                <h2 class="font-semibold mb-6 text-center max-w-2xl mx-auto sm:leading-14 capitalize text-gray-900 sm:text-5xl text-4xl">
                     {{ translations.features_title }}
                 </h2>
-                <p class="lg:text-lg font-normal text-lightpurple text-center max-w-2xl mx-auto">
+                <p class="lg:text-lg font-normal text-gray-600 text-center max-w-2xl mx-auto">
                     {{ translations.features_description }}
                 </p>
             </div>
@@ -216,14 +200,14 @@
 </section>
 
 <!-- FAQ Section -->
-<section id="faq-section" class="scroll-mt-20 bg-body-bg">
+<section id="faq-section" class="scroll-mt-20 bg-white">
     <div class="container">
         <div class="grid lg:grid-cols-2 gap-10 items-center">
             <div data-aos="fade-right">
                 <img src="{% static 'images/faq/faq.svg' %}" alt="FAQ" class="w-full">
             </div>
             <div data-aos="fade-left">
-                <h2 class="text-lightsky sm:text-5xl text-4xl font-bold mb-8">Frequently Asked Questions</h2>
+                <h2 class="text-gray-900 sm:text-5xl text-4xl font-bold mb-8">Frequently Asked Questions</h2>
                 <div class="space-y-4">
                     <details class="bg-gray-50 border border-gray-200 p-6 rounded-lg shadow-md">
                         <summary class="text-gray-900 text-lg font-medium cursor-pointer">1. What is cryptocurrency?</summary>

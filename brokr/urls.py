@@ -48,6 +48,7 @@ urlpatterns += i18n_patterns(
     path('help/', views.help_center_view, name='help_center'),
     path('contact/', views.contact_support_view, name='contact_support'),
     path('about/', views.about_view, name='about'),
+    path('asset/<str:symbol>/', views.asset_detail_view, name='asset_detail'),
 )
 
 # Serve static and media files in development

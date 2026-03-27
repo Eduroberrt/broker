@@ -64,8 +64,12 @@
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             {% for asset in crypto_assets %}
                             <button type="button" class="crypto-buy-btn {% if forloop.first %}border-2 border-primary{% else %}border border-gray-200{% endif %} bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="{{ asset.symbol }}" data-price="{{ asset.current_price }}">
-                                <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-900 font-bold text-lg" style="background-color: {{ asset.color }};">
-                                    {{ asset.icon }}
+                                <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center overflow-hidden" style="background-color: {{ asset.color }};">
+                                    {% if asset.icon_url %}
+                                        <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-7 h-7 object-contain">
+                                    {% else %}
+                                        <span class="text-white font-bold text-lg">{{ asset.icon }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="text-gray-900 text-sm font-semibold mb-1">{{ asset.symbol }}</div>
                                 <div class="text-gray-900/60 text-xs">{{ asset.formatted_price }}</div>
@@ -84,7 +88,7 @@
                     </div>
                     
                     <!-- Buy Button -->
-                    <button type="submit" class="w-full py-4 text-gray-900 font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                    <button type="submit" class="w-full py-4 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
                         Continue to Payment
                     </button>
                     

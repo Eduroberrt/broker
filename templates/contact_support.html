@@ -85,20 +85,20 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <!-- Name -->
                         <div>
-                            <label for="name" class="block text-sm font-medium mb-2">{{ translations.full_name }} <span class="text-red-400">*</span></label>
+                            <label for="name" class="block text-sm font-medium text-gray-900 mb-2">{{ translations.full_name }} <span class="text-red-400">*</span></label>
                             <input type="text" id="name" name="name" required value="{{ request.user.get_full_name }}" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary transition-all">
                         </div>
 
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium mb-2">{{ translations.email_address }} <span class="text-red-400">*</span></label>
+                            <label for="email" class="block text-sm font-medium text-gray-900 mb-2">{{ translations.email_address }} <span class="text-red-400">*</span></label>
                             <input type="email" id="email" name="email" required value="{{ request.user.email }}" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary transition-all">
                         </div>
                     </div>
 
                     <!-- Subject -->
                     <div>
-                        <label for="subject" class="block text-sm font-medium mb-2">{{ translations.subject }} <span class="text-red-400">*</span></label>
+                        <label for="subject" class="block text-sm font-medium text-gray-900 mb-2">{{ translations.subject }} <span class="text-red-400">*</span></label>
                         <select id="subject" name="subject" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-primary transition-all">
                             <option value="" class="bg-gray-50">{{ translations.select_subject }}</option>
                             <option value="Account Issues" class="bg-gray-50">{{ translations.subject_account_issues }}</option>
@@ -115,7 +115,7 @@
 
                     <!-- Message -->
                     <div>
-                        <label for="message" class="block text-sm font-medium mb-2">{{ translations.message }} <span class="text-red-400">*</span></label>
+                        <label for="message" class="block text-sm font-medium text-gray-900 mb-2">{{ translations.message }} <span class="text-red-400">*</span></label>
                         <textarea id="message" name="message" required rows="6" placeholder="{{ translations.message_placeholder }}" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary transition-all resize-none"></textarea>
                         <p class="text-gray-900/40 text-xs mt-2">{{ translations.message_note }}</p>
                     </div>

@@ -65,32 +65,20 @@
                         <div class="mb-6">
                             <label class="block text-gray-900 mb-3 font-semibold">Select Cryptocurrency</label>
                             <div class="grid grid-cols-4 gap-3">
-                                <button type="button" class="crypto-select-btn border-2 border-primary bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="BTC">
-                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-900 font-bold text-lg" style="background-color: #f7931a;">
-                                        ₿
+                                {% for asset in crypto_assets %}
+                                <button type="button" class="crypto-select-btn {% if forloop.first %}border-2 border-primary{% else %}border border-gray-200{% endif %} bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="{{ asset.symbol }}">
+                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center overflow-hidden" style="background-color: {{ asset.color }};">
+                                        {% if asset.icon_url %}
+                                            <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-7 h-7 object-contain">
+                                        {% else %}
+                                            <span class="text-white font-bold text-lg">{{ asset.icon }}</span>
+                                        {% endif %}
                                     </div>
-                                    <div class="text-gray-900 text-sm font-semibold">BTC</div>
+                                    <div class="text-gray-900 text-sm font-semibold">{{ asset.symbol }}</div>
                                 </button>
-                                <button type="button" class="crypto-select-btn border border-gray-200 bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="XRP">
-                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-900 font-bold text-lg" style="background-color: #23292f;">
-                                        ✕
-                                    </div>
-                                    <div class="text-gray-900 text-sm font-semibold">XRP</div>
-                                </button>
-                                <button type="button" class="crypto-select-btn border border-gray-200 bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="XLM">
-                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-900 font-bold text-lg" style="background-color: #14b6f6;">
-                                        ✦
-                                    </div>
-                                    <div class="text-gray-900 text-sm font-semibold">XLM</div>
-                                </button>
-                                <button type="button" class="crypto-select-btn border border-gray-200 bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="HBAR">
-                                    <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-900 font-bold text-lg" style="background-color: #000000;">
-                                        Ħ
-                                    </div>
-                                    <div class="text-gray-900 text-sm font-semibold">HBAR</div>
-                                </button>
+                                {% endfor %}
                             </div>
-                            <input type="hidden" id="crypto-asset-input" name="crypto_asset" value="BTC">
+                            <input type="hidden" id="crypto-asset-input" name="crypto_asset" value="{{ crypto_assets.0.symbol }}">
                         </div>
                         
                         <!-- Wallet Address -->
@@ -136,12 +124,12 @@
                         <!-- Proof of Transfer -->
                         <div class="mb-6">
                             <label class="block text-gray-900 mb-2 font-semibold">Proof of Transfer</label>
-                            <input type="file" name="proof_of_transfer" accept="image/*,.pdf" required class="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-gray-900 hover:file:opacity-90 focus:outline-none focus:border-primary">
+                            <input type="file" name="proof_of_transfer" accept="image/*,.pdf" required class="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 focus:outline-none focus:border-primary">
                             <p class="text-xs text-gray-900/60 mt-2">Upload screenshot or receipt of your crypto transfer</p>
                         </div>
                         
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full py-4 text-gray-900 font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+                        <button type="submit" class="w-full py-4 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
                             Submit
                         </button>
                     </form>
@@ -156,8 +144,12 @@
                             <div class="bg-white rounded-lg p-4 border border-gray-200">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-gray-900 font-bold" style="background-color: {{ transaction.crypto_asset.color }};">
-                                            {{ transaction.crypto_asset.icon }}
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden" style="background-color: {{ transaction.crypto_asset.color }};">
+                                            {% if transaction.crypto_asset.icon_url %}
+                                                <img src="{{ transaction.crypto_asset.icon_url }}" alt="{{ transaction.crypto_asset.name }}" class="w-6 h-6 object-contain">
+                                            {% else %}
+                                                <span class="text-white font-bold">{{ transaction.crypto_asset.icon }}</span>
+                                            {% endif %}
                                         </div>
                                         <span class="text-gray-900 font-semibold">{{ transaction.crypto_asset.symbol }}</span>
                                     </div>
@@ -206,7 +198,7 @@
             </div>
             <h3 class="text-gray-900 text-xl font-semibold mb-2">Transaction Submitted!</h3>
             <p class="text-gray-900/60 text-sm mb-6">Your transaction is being reviewed by our admin. You'll be notified once it's confirmed.</p>
-            <button onclick="closeConfirmationModal()" class="w-full py-3 text-gray-900 font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
+            <button onclick="closeConfirmationModal()" class="w-full py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
                 OK
             </button>
         </div>

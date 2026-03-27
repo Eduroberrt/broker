@@ -4,14 +4,15 @@ from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction
 
 @admin.register(CryptoAsset)
 class CryptoAssetAdmin(admin.ModelAdmin):
-    list_display = ['name', 'symbol', 'formatted_price', 'base_price', 'percentage_change', 'order', 'updated_at']
-    list_editable = ['order']
+    list_display = ['name', 'symbol', 'asset_type', 'formatted_price', 'base_price', 'percentage_change', 'is_in_watchlist', 'order', 'updated_at']
+    list_editable = ['order', 'is_in_watchlist']
+    list_filter = ['asset_type', 'is_in_watchlist']
     search_fields = ['name', 'symbol']
     ordering = ['order', 'name']
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'order')
+            'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'asset_type', 'is_in_watchlist', 'order')
         }),
         ('Price Information', {
             'fields': ('current_price', 'base_price'),

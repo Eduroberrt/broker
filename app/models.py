@@ -6,11 +6,18 @@ from django.dispatch import receiver
 
 class CryptoAsset(models.Model):
     """Model to store cryptocurrency prices controlled by admin"""
+    ASSET_TYPE_CHOICES = [
+        ('crypto', 'Cryptocurrency'),
+        ('stock', 'Stock (xStocks)'),
+    ]
+    
     name = models.CharField(max_length=50, unique=True, help_text="Full name (e.g., Bitcoin)")
     symbol = models.CharField(max_length=10, unique=True, help_text="Symbol (e.g., BTC)")
     icon = models.CharField(max_length=10, default="₿", help_text="Icon character to display")
     icon_url = models.URLField(max_length=500, blank=True, null=True, help_text="URL to coin logo image")
     color = models.CharField(max_length=20, default="#f7931a", help_text="Hex color code")
+    asset_type = models.CharField(max_length=10, choices=ASSET_TYPE_CHOICES, default='crypto', help_text="Type of asset")
+    is_in_watchlist = models.BooleanField(default=True, help_text="Show in watchlist")
     
     # Price information
     current_price = models.DecimalField(

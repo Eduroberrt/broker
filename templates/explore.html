@@ -81,7 +81,7 @@
         }
     </style>
 </head>
-<body class="text-gray-900">
+<body class="text-gray-900 bg-white">
     {% include 'partials/dashboard_header.html' %}
 
     <div class="container mx-auto px-4 sm:px-6 pt-24 pb-32">
@@ -109,12 +109,10 @@
         <div class="mb-8">
             <div class="flex flex-wrap lg:flex-nowrap gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide">
                 <button onclick="filterCategory('all')" data-category="all" class="filter-tab px-5 py-2.5 bg-purple-600 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">All</button>
-                <button onclick="filterCategory('favorites')" data-category="favorites" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Favorites ⭐</button>
-                <button onclick="filterCategory('trending')" data-category="trending" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Trending 🔥</button>
                 <button onclick="filterCategory('gainers')" data-category="gainers" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Gainers 📈</button>
-                <button onclick="filterCategory('losers')" data-category="losers" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Losers 📉</button>
-                <button onclick="filterCategory('defi')" data-category="defi" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">DeFi 🏦</button>
-                <button onclick="filterCategory('nft')" data-category="nft" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">NFT 🎨</button>
+                <button onclick="filterCategory('trending')" data-category="trending" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Hot 🔥</button>
+                <button onclick="filterCategory('new')" data-category="new" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">New Listed ✨</button>
+                <button onclick="filterCategory('popular')" data-category="popular" class="filter-tab px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold whitespace-nowrap transition-all flex-shrink-0">Most Popular ⭐</button>
             </div>
         </div>
 
@@ -226,7 +224,17 @@
                             <td class="p-4 text-right hidden lg:table-cell text-gray-900/80">${{ asset.market_cap|floatformat:0 }}B</td>
                             <td class="p-4 text-right hidden lg:table-cell text-gray-900/80">${{ asset.volume_24h|floatformat:0 }}M</td>
                             <td class="p-4 text-right">
-                                <button class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-semibold transition-colors">
+                                <button onclick="openAssetModal(this)" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-semibold text-white transition-colors"
+                                    data-name="{{ asset.name }}"
+                                    data-symbol="{{ asset.symbol }}"
+                                    data-price="{{ asset.formatted_price }}"
+                                    data-change="{{ asset.percentage_change }}"
+                                    data-week-change="{{ asset.week_change|floatformat:2 }}"
+                                    data-market-cap="{{ asset.market_cap|floatformat:0 }}"
+                                    data-volume="{{ asset.volume_24h|floatformat:0 }}"
+                                    data-icon-url="{% if asset.icon_url %}{{ asset.icon_url }}{% endif %}"
+                                    data-color="{{ asset.color }}"
+                                    data-icon="{{ asset.icon }}">
                                     Trade
                                 </button>
                             </td>
@@ -283,17 +291,17 @@
 
     <!-- Asset Detail Modal -->
     <div id="assetModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-gradient-to-br from-darkmode to-[#1a2456] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl animate-modal">
-            <div class="sticky top-0 bg-gradient-to-br from-darkmode to-[#1a2456] border-b border-gray-200 p-6 flex items-center justify-between z-10">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl animate-modal">
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
                 <div class="flex items-center gap-4">
                     <div id="modalIcon" class="w-16 h-16 rounded-full flex items-center justify-center"></div>
                     <div>
-                        <h3 id="modalName" class="text-2xl font-bold"></h3>
+                        <h3 id="modalName" class="text-2xl font-bold text-gray-900"></h3>
                         <p id="modalSymbol" class="text-gray-900/60"></p>
                     </div>
                 </div>
                 <button onclick="closeAssetModal()" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -304,34 +312,14 @@
                 <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <p class="text-gray-900/60 text-sm mb-2">Current Price</p>
                     <div class="flex items-end gap-4">
-                        <h2 id="modalPrice" class="text-4xl font-bold"></h2>
+                        <h2 id="modalPrice" class="text-4xl font-bold text-gray-900"></h2>
                         <div id="modalChange" class="flex items-center gap-1 mb-2"></div>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <p class="text-gray-900/60 text-sm mb-1">24h Change</p>
-                        <p id="modal24h" class="text-xl font-semibold"></p>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <p class="text-gray-900/60 text-sm mb-1">7d Change</p>
-                        <p id="modal7d" class="text-xl font-semibold"></p>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <p class="text-gray-900/60 text-sm mb-1">Market Cap</p>
-                        <p id="modalMarketCap" class="text-xl font-semibold"></p>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                        <p class="text-gray-900/60 text-sm mb-1">24h Volume</p>
-                        <p id="modalVolume" class="text-xl font-semibold"></p>
                     </div>
                 </div>
 
                 <!-- Price Chart Placeholder -->
                 <div class="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                    <h4 class="text-lg font-semibold mb-4">Price Chart (7 Days)</h4>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-900">Price Chart (7 Days)</h4>
                     <div class="h-48 flex items-center justify-center">
                         <canvas id="assetChart"></canvas>
                     </div>
@@ -339,13 +327,13 @@
 
                 <!-- Action Buttons -->
                 <div class="grid md:grid-cols-3 gap-3">
-                    <a href="{% url 'buy' %}" class="block px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-xl text-center font-semibold transition-all hover:scale-105">
+                    <a href="{% url 'buy' %}" class="block px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-xl text-center font-semibold text-white transition-all hover:scale-105">
                         Buy
                     </a>
-                    <a href="{% url 'sell' %}" class="block px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-xl text-center font-semibold transition-all hover:scale-105">
+                    <a href="{% url 'sell' %}" class="block px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 rounded-xl text-center font-semibold text-white transition-all hover:scale-105">
                         Sell
                     </a>
-                    <a href="{% url 'swap' %}" class="block px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 rounded-xl text-center font-semibold transition-all hover:scale-105">
+                    <a href="{% url 'swap' %}" class="block px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 rounded-xl text-center font-semibold text-white transition-all hover:scale-105">
                         Swap
                     </a>
                 </div>
@@ -357,7 +345,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <div>
-                            <p class="font-semibold mb-1">About this asset</p>
+                            <p class="font-semibold mb-1 text-gray-900">About this asset</p>
                             <p class="text-sm text-gray-900/80" id="modalDescription">
                                 Track real-time prices and market data. Use the action buttons above to trade this cryptocurrency on our platform.
                             </p>
@@ -443,20 +431,6 @@
                     ${isPositive ? '+' : ''}${change}%
                 </span>
             `;
-
-            // Update stats
-            document.getElementById('modal24h').innerHTML = `
-                <span class="${isPositive ? 'text-green-400' : 'text-red-400'}">
-                    ${isPositive ? '+' : ''}${change}%
-                </span>
-            `;
-            document.getElementById('modal7d').innerHTML = `
-                <span class="${parseFloat(weekChange) >= 0 ? 'text-green-400' : 'text-red-400'}">
-                    ${parseFloat(weekChange) >= 0 ? '+' : ''}${weekChange}%
-                </span>
-            `;
-            document.getElementById('modalMarketCap').textContent = marketCap ? `$${marketCap}B` : 'N/A';
-            document.getElementById('modalVolume').textContent = volume ? `$${volume}M` : 'N/A';
 
             // Create price chart
             createAssetChart(change);

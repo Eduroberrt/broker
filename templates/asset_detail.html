@@ -1,0 +1,409 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ asset.symbol }} - Prestige Coin Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#bd24df',
+                        'secondary': '#2d6ade',
+                        'darkmode': '#0c1b44'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white">
+    {% include 'partials/dashboard_header.html' %}
+    
+    <!-- Main Content -->
+    <main class="pt-16 pb-20 md:pb-8 min-h-screen">
+        <div class="max-w-2xl mx-auto px-4 py-6">
+            
+            <!-- Header with Back Button -->
+            <div class="flex items-center justify-between mb-6">
+                <a href="{% url 'dashboard' %}" class="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <h1 class="text-2xl font-bold text-gray-900">{{ asset.symbol }}</h1>
+                <div class="w-6"></div>
+            </div>
+            
+            <!-- Asset Icon and Name -->
+            <div class="flex items-center gap-3 mb-4">
+                {% if asset.icon_url %}
+                <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white p-2 border border-gray-200">
+                    <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-full h-full object-contain">
+                </div>
+                {% else %}
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background-color: {{ asset.color }};">
+                    <span class="text-white font-bold text-xl">{{ asset.icon }}</span>
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">{{ asset.name }}</h2>
+                    <p class="text-gray-500 text-sm">{{ asset.symbol }}</p>
+                </div>
+            </div>
+            
+            <!-- Price -->
+            <div class="mb-2">
+                <h3 class="text-4xl font-bold text-gray-900">{{ asset.formatted_price }}</h3>
+            </div>
+            
+            <!-- Price Change -->
+            <div class="flex items-center gap-2 mb-8">
+                <span class="{% if asset.is_positive_change %}text-green-500{% else %}text-red-500{% endif %} font-semibold flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        {% if asset.is_positive_change %}
+                        <path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        {% else %}
+                        <path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        {% endif %}
+                    </svg>
+                    ${{ asset.percentage_change|floatformat:4|stringformat:"s"|slice:"-7:" }} ({{ asset.percentage_change|floatformat:2 }}%)
+                </span>
+                <span class="text-gray-500 text-sm">this week</span>
+            </div>
+            
+            <!-- Chart -->
+            <div class="bg-white rounded-2xl p-4 mb-6 border border-gray-200">
+                <div class="h-64 relative">
+                    <canvas id="assetChart"></canvas>
+                </div>
+                
+                <!-- Time Period Buttons -->
+                <div class="flex items-center justify-between mt-4 gap-2 overflow-x-auto">
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" data-period="24h">24H</button>
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium bg-gray-200 text-gray-900 rounded-lg transition-colors active" data-period="1w">1W</button>
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" data-period="1m">1M</button>
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" data-period="6m">6M</button>
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" data-period="1y">1Y</button>
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" data-period="5y">5Y</button>
+                    <button class="time-period-btn px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors" data-period="all">ALL</button>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="flex items-center gap-6 mb-6 border-b border-gray-200">
+                <button class="tab-link pb-3 font-semibold text-gray-900 border-b-2 border-gray-900" data-tab="overview">Overview</button>
+                <button class="tab-link pb-3 font-medium text-gray-500 hover:text-gray-900" data-tab="orders">Orders</button>
+                <button class="tab-link pb-3 font-medium text-gray-500 hover:text-gray-900" data-tab="transactions">Transactions</button>
+            </div>
+            
+            <!-- Overview Tab Content -->
+            <div id="overview-tab" class="tab-content">
+                <!-- Your Balance -->
+                <div class="bg-white rounded-2xl p-6 mb-4 border border-gray-200">
+                    <p class="text-gray-500 text-sm mb-2">Your Balance</p>
+                    <p class="text-2xl font-bold text-gray-900 mb-1">{{ crypto_amount|floatformat:8 }} {{ asset.symbol }}</p>
+                    <p class="text-gray-500 text-sm">${{ user_balance_usd|floatformat:2 }} USD</p>
+                </div>
+                
+                <!-- About -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                    <h3 class="font-semibold text-gray-900 mb-3">About {{ asset.name }}</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        {{ asset.name }} ({{ asset.symbol }}) - View your balance and transaction history for this asset. Use the tabs above to see your orders and transactions.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Orders Tab Content -->
+            <div id="orders-tab" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-12 text-center border border-gray-200">
+                    <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="text-gray-500">No active orders</p>
+                </div>
+            </div>
+            
+            <!-- Transactions Tab Content -->
+            <div id="transactions-tab" class="tab-content hidden">
+                {% if transactions %}
+                    <div class="space-y-3">
+                        {% for transaction in transactions %}
+                        <div class="bg-white rounded-2xl p-4 border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <!-- Transaction Icon -->
+                                    {% if transaction.type == 'receive' %}
+                                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                        </svg>
+                                    </div>
+                                    {% elif transaction.type == 'sell' %}
+                                    <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                                        </svg>
+                                    </div>
+                                    {% else %}
+                                    <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                        </svg>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div>
+                                        <!-- Transaction Type & Details -->
+                                        {% if transaction.type == 'receive' %}
+                                        <p class="font-semibold text-gray-900">Receive</p>
+                                        <p class="text-sm text-gray-500">From: {{ transaction.data.wallet_address|slice:":10" }}...{{ transaction.data.wallet_address|slice:"-8:" }}</p>
+                                        {% elif transaction.type == 'sell' %}
+                                        <p class="font-semibold text-gray-900">Sell</p>
+                                        <p class="text-sm text-gray-500">To USD</p>
+                                        {% elif transaction.type == 'swap_from' %}
+                                        <p class="font-semibold text-gray-900">Swap</p>
+                                        <p class="text-sm text-gray-500">To: {{ transaction.data.to_crypto.symbol }}</p>
+                                        {% elif transaction.type == 'swap_to' %}
+                                        <p class="font-semibold text-gray-900">Swap</p>
+                                        <p class="text-sm text-gray-500">From: {{ transaction.data.from_crypto.symbol }}</p>
+                                        {% endif %}
+                                        <p class="text-xs text-gray-400 mt-1">{{ transaction.data.created_at|date:"d M Y, H:i" }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-right">
+                                    <!-- Transaction Amount -->
+                                    {% if transaction.type == 'receive' %}
+                                    <p class="font-semibold text-green-500">+{{ transaction.data.amount|floatformat:8 }} {{ asset.symbol }}</p>
+                                    <p class="text-sm text-gray-500">≈ ${{ transaction.data.amount|floatformat:2 }}</p>
+                                    {% elif transaction.type == 'sell' %}
+                                    <p class="font-semibold text-red-500">-{{ transaction.data.amount_to_sell|floatformat:8 }} {{ asset.symbol }}</p>
+                                    <p class="text-sm text-gray-500">≈ ${{ transaction.data.amount_to_sell|floatformat:2 }}</p>
+                                    {% elif transaction.type == 'swap_from' %}
+                                    <p class="font-semibold text-red-500">-{{ transaction.data.from_amount_usd|floatformat:8 }} {{ asset.symbol }}</p>
+                                    <p class="text-sm text-gray-500">≈ ${{ transaction.data.from_amount_usd|floatformat:2 }}</p>
+                                    {% elif transaction.type == 'swap_to' %}
+                                    <p class="font-semibold text-green-500">+{{ transaction.data.to_amount_usd|floatformat:8 }} {{ asset.symbol }}</p>
+                                    <p class="text-sm text-gray-500">≈ ${{ transaction.data.to_amount_usd|floatformat:2 }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            <div class="mt-3 flex items-center gap-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Confirmed
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="bg-white rounded-2xl p-12 text-center border border-gray-200">
+                        <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-gray-500">No transactions yet</p>
+                        <p class="text-sm text-gray-400 mt-2">Your {{ asset.symbol }} transaction history will appear here</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+        </div>
+    </main>
+    
+    {% include 'partials/dashboard_footer.html' %}
+    
+    <!-- Mobile Copyright Footer (Page Content) -->
+    <div class="md:hidden bg-darkmode border-t border-white/10 py-4 text-center">
+        <p class="text-sm text-white/60">@{{ current_year|default:"2025" }} - All Rights Reserved by <span class="text-[#bd24df]">Prestige Coin Vault</span></p>
+    </div>
+    
+    <!-- Mobile Bottom Navigation (Sticky) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden">
+        <div class="grid grid-cols-4 gap-1 px-4 py-3">
+            <a href="{% url 'dashboard' %}" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="text-xs font-medium">Home</span>
+            </a>
+            <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs font-medium">Portfolio</span>
+            </a>
+            <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span class="text-xs font-medium">Explore</span>
+            </a>
+            <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-gray-500 hover:text-gray-900 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span class="text-xs font-medium">More</span>
+            </a>
+        </div>
+    </nav>
+    
+    <script>
+        // Chart
+        const ctx = document.getElementById('assetChart');
+        const isPositive = {{ asset.is_positive_change|yesno:"true,false" }};
+        const chartColor = isPositive ? '#10b981' : '#ef4444';
+        
+        // Generate chart data based on percentage change
+        const percentageChange = {{ asset.percentage_change }};
+        let currentPeriod = '1w';
+        let myChart;
+        
+        function generateChartData(period) {
+            const dataPoints = {
+                '24h': 24,
+                '1w': 30,
+                '1m': 30,
+                '6m': 26,
+                '1y': 52,
+                '5y': 60,
+                'all': 100
+            };
+            
+            const points = dataPoints[period] || 30;
+            const chartData = [];
+            const baseValue = 50;
+            
+            for (let i = 0; i < points; i++) {
+                const progress = i / (points - 1);
+                const trend = baseValue + (percentageChange * progress * 0.5);
+                const noise = (Math.random() - 0.5) * 2;
+                chartData.push(trend + noise);
+            }
+            
+            return chartData;
+        }
+        
+        function createChart(data) {
+            if (myChart) {
+                myChart.destroy();
+            }
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(data.length).fill(''),
+                    datasets: [{
+                        data: data,
+                        borderColor: chartColor,
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            grid: { display: false }
+                        },
+                        y: {
+                            display: true,
+                            position: 'right',
+                            grid: { 
+                                display: true,
+                                color: '#f3f4f6',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                font: { size: 11 },
+                                count: 4
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize chart
+        createChart(generateChartData('1w'));
+        
+        // Tab switching
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                // Update tab links
+                tabLinks.forEach(l => {
+                    l.classList.remove('text-gray-900', 'border-b-2', 'border-gray-900');
+                    l.classList.add('text-gray-500');
+                });
+                this.classList.remove('text-gray-500');
+                this.classList.add('text-gray-900', 'border-b-2', 'border-gray-900');
+                
+                // Update tab contents
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(tabName + '-tab').classList.remove('hidden');
+            });
+        });
+        
+        // Time period buttons
+        const periodButtons = document.querySelectorAll('.time-period-btn');
+        periodButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                currentPeriod = this.getAttribute('data-period');
+                
+                // Update button styles
+                periodButtons.forEach(b => {
+                    b.classList.remove('bg-gray-200', 'text-gray-900', 'active');
+                    b.classList.add('text-gray-500');
+                });
+                this.classList.remove('text-gray-500');
+                this.classList.add('bg-gray-200', 'text-gray-900', 'active');
+                
+                // Update chart with new data
+                createChart(generateChartData(currentPeriod));
+            });
+        });
+    </script>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+</body>
+</html>
