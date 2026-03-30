@@ -4,23 +4,45 @@ from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction
 
 @admin.register(CryptoAsset)
 class CryptoAssetAdmin(admin.ModelAdmin):
-    list_display = ['name', 'symbol', 'asset_type', 'formatted_price', 'base_price', 'percentage_change', 'is_in_watchlist', 'order', 'updated_at']
+    list_display = ['name', 'symbol', 'asset_type', 'formatted_price', 'base_price', 'percentage_change', 'is_in_watchlist', 'order', 'updated_at', 'api_status']
     list_editable = ['order', 'is_in_watchlist']
     list_filter = ['asset_type', 'is_in_watchlist']
     search_fields = ['name', 'symbol']
     ordering = ['order', 'name']
     
-    fieldsets = (
-        ('Basic Information', {
-            'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'asset_type', 'is_in_watchlist', 'order')
-        }),
-        ('Price Information', {
-            'fields': ('current_price', 'base_price'),
-            'description': 'Update current_price to change market price. Base price is used to calculate percentage change.'
-        }),
-    )
+    def get_fieldsets(self, request, obj=None):
+        # Only allow editing XRP prices manually
+        if obj and obj.symbol == 'XRP':
+            return (
+                ('Basic Information', {
+                    'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'asset_type', 'is_in_watchlist', 'order')
+                }),
+                ('Price Information (Manual Control for XRP)', {
+                    'fields': ('current_price', 'base_price'),
+                    'description': 'XRP prices are manually controlled. Update current_price to change market price.'
+                }),
+            )
+        else:
+            return (
+                ('Basic Information', {
+                    'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'asset_type', 'is_in_watchlist', 'order')
+                }),
+                ('Price Information (Auto-Updated from API)', {
+                    'fields': ('current_price', 'base_price'),
+                    'description': 'Prices are automatically updated from CoinGecko API. Manual editing is disabled for non-XRP assets.'
+                }),
+            )
     
-    readonly_fields = []
+    def get_readonly_fields(self, request, obj=None):
+        # Make price fields readonly for all assets except XRP
+        if obj and obj.symbol != 'XRP':
+            return ['current_price', 'base_price']
+        return []
+    
+    def get_queryset(self, request):
+        # Only show XRP in admin list view
+        qs = super().get_queryset(request)
+        return qs.filter(symbol='XRP')
     
     def percentage_change(self, obj):
         change = obj.percentage_change
@@ -35,6 +57,13 @@ class CryptoAssetAdmin(admin.ModelAdmin):
             formatted_change
         )
     percentage_change.short_description = 'Change %'
+    
+    def api_status(self, obj):
+        if obj.symbol == 'XRP':
+            return format_html('<span style="color: orange; font-weight: bold;">⚙️ Manual</span>')
+        else:
+            return format_html('<span style="color: green; font-weight: bold;">🔄 Auto API</span>')
+    api_status.short_description = 'Price Source'
 
 
 @admin.register(ReceiveTransaction)
