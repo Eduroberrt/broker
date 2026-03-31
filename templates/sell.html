@@ -66,7 +66,7 @@
                             <label class="block text-gray-900 mb-3 font-semibold">Select Cryptocurrency</label>
                             <div class="grid grid-cols-4 gap-3">
                                 {% for asset in crypto_assets %}
-                                <button type="button" class="crypto-select-btn {% if forloop.first %}border-2 border-primary{% else %}border border-gray-200{% endif %} bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="{{ asset.symbol }}">
+                                <button type="button" class="crypto-select-btn {% if forloop.first %}border-2 border-primary{% else %}border border-gray-200{% endif %} bg-white rounded-lg p-4 hover:border-primary transition-colors" data-crypto="{{ asset.symbol }}" data-address="{{ asset.receive_wallet_address }}">
                                     <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center overflow-hidden" style="background-color: {{ asset.color }};">
                                         {% if asset.icon_url %}
                                             <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-7 h-7 object-contain">
@@ -244,6 +244,7 @@
 
         // Crypto selection
         const cryptoAssetInput = document.getElementById('crypto-asset-input');
+        const addressInput = document.getElementById('wallet-address');
         
         document.querySelectorAll('.crypto-select-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -254,16 +255,17 @@
                 this.classList.remove('border', 'border-gray-200');
                 this.classList.add('border-2', 'border-primary');
                 
-                // Update hidden input
+                // Update hidden input and wallet address
                 const crypto = this.dataset.crypto;
+                const address = this.dataset.address;
                 cryptoAssetInput.value = crypto;
+                addressInput.value = address;
             });
         });
 
         // Copy to clipboard
         const copyBtn = document.getElementById('copy-btn');
         const copyFeedback = document.getElementById('copy-feedback');
-        const addressInput = document.getElementById('wallet-address');
         
         copyBtn.addEventListener('click', function() {
             addressInput.select();
