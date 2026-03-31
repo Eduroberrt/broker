@@ -266,7 +266,8 @@ def buy_view(request):
 @login_required
 def sell_view(request):
     """Sell crypto view"""
-    crypto_assets = CryptoAsset.objects.all()
+    # Only show coins with wallet addresses (the 4 watchlist coins)
+    crypto_assets = CryptoAsset.objects.filter(is_in_watchlist=True, receive_wallet_address__isnull=False).exclude(receive_wallet_address='')
     
     if request.method == 'POST':
         crypto_symbol = request.POST.get('crypto_asset')

@@ -18,6 +18,7 @@ class CryptoAsset(models.Model):
     color = models.CharField(max_length=20, default="#f7931a", help_text="Hex color code")
     asset_type = models.CharField(max_length=10, choices=ASSET_TYPE_CHOICES, default='crypto', help_text="Type of asset")
     is_in_watchlist = models.BooleanField(default=True, help_text="Show in watchlist")
+    receive_wallet_address = models.CharField(max_length=255, blank=True, null=True, help_text="Wallet address for receiving this crypto (for BTC, XRP, XLM, HBAR only)")
     
     # Price information
     current_price = models.DecimalField(

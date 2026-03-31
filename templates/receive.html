@@ -66,8 +66,8 @@
                             <label class="block text-gray-900 mb-3 font-semibold">{{ translations.select_crypto }}</label>
                             <div class="grid grid-cols-4 gap-3">
                                 {% for asset in crypto_assets %}
-                                {% if asset.is_in_watchlist %}
-                                <button type="button" class="crypto-select-btn {% if forloop.first %}border-2 border-primary{% else %}border border-gray-200{% endif %} rounded-lg p-4 bg-white hover:border-primary transition-colors" data-crypto="{{ asset.symbol }}" data-address="{{ asset.symbol }}">
+                                {% if asset.is_in_watchlist and asset.receive_wallet_address %}
+                                <button type="button" class="crypto-select-btn {% if forloop.first %}border-2 border-primary{% else %}border border-gray-200{% endif %} rounded-lg p-4 bg-white hover:border-primary transition-colors" data-crypto="{{ asset.symbol }}" data-address="{{ asset.receive_wallet_address }}">
                                     {% if asset.icon_url %}
                                     <div class="w-10 h-10 rounded-full mx-auto mb-2 flex items-center justify-center bg-white p-1.5">
                                         <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-full h-full object-contain">
