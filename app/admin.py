@@ -107,97 +107,6 @@ class ReceiveTransactionAdmin(admin.ModelAdmin):
         
         super().save_model(request, obj, form, change)
 
-@admin.register(UserWallet)
-class UserWalletAdmin(admin.ModelAdmin):
-    list_display = ['username', 'wallet_balance_display']
-    search_fields = ['user__username']
-    actions = None
-    
-    def has_add_permission(self, request):
-        return False
-    
-    def has_delete_permission(self, request, obj=None):
-        return False
-    
-    def get_queryset(self, request):
-        # Get all UserProfile objects (one per user)
-        from app.models import UserProfile
-        # We'll use UserProfile as the base, but need to adapt for UserWallet registration
-        # Actually, let's filter UserWallet to show one per user (any crypto, doesn't matter)
-        qs = super().get_queryset(request)
-        # Get one wallet per user (using distinct on user)
-        seen_users = set()
-        filtered_qs = []
-        for wallet in qs.select_related('user', 'user__profile'):
-            if wallet.user.id not in seen_users:
-                seen_users.add(wallet.user.id)
-                filtered_qs.append(wallet.id)
-        return qs.filter(id__in=filtered_qs)
-    
-    def username(self, obj):
-        return obj.user.username
-    username.short_description = 'User'
-    username.admin_order_field = 'user__username'
-    
-    def wallet_balance_display(self, obj):
-        """Display user's wallet balance from UserProfile"""
-        from app.models import UserProfile
-        if hasattr(obj.user, 'profile'):
-            profile = obj.user.profile
-        else:
-            profile, created = UserProfile.objects.get_or_create(user=obj.user)
-        return f'${profile.wallet_balance:,.2f}'
-    wallet_balance_display.short_description = 'Wallet Balance (USD)'
-    
-    # Form configuration
-    fields = ['user', 'wallet_balance']
-    readonly_fields = ['user']
-    
-    def get_form(self, request, obj=None, **kwargs):
-        from django import forms
-        from app.models import UserProfile
-        
-        class UserWalletBalanceForm(forms.ModelForm):
-            wallet_balance = forms.DecimalField(
-                max_digits=20,
-                decimal_places=2,
-                label='Wallet Balance (USD)',
-                widget=forms.NumberInput(attrs={'step': '0.01'}),
-                help_text='Enter the new wallet balance for this user'
-            )
-            
-            class Meta:
-                model = UserWallet
-                fields = ['user', 'wallet_balance']
-            
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                if self.instance and self.instance.pk and self.instance.user:
-                    profile, created = UserProfile.objects.get_or_create(user=self.instance.user)
-                    self.fields['wallet_balance'].initial = profile.wallet_balance
-                if 'user' in self.fields:
-                    self.fields['user'].disabled = True
-        
-        kwargs['form'] = UserWalletBalanceForm
-        return super().get_form(request, obj, **kwargs)
-    
-    def save_model(self, request, obj, form, change):
-        """Save the wallet balance to UserProfile"""
-        if change and 'wallet_balance' in form.cleaned_data:
-            from app.models import UserProfile
-            new_balance = form.cleaned_data['wallet_balance']
-            profile, created = UserProfile.objects.get_or_create(user=obj.user)
-            profile.wallet_balance = new_balance
-            profile.save()
-            self.message_user(request, f"Wallet balance for {obj.user.username} set to ${new_balance:,.2f}")
-        # Don't save the UserWallet object itself
-    
-    def changelist_view(self, request, extra_context=None):
-        extra_context = extra_context or {}
-        extra_context['title'] = 'User Wallet Balances'
-        return super().changelist_view(request, extra_context=extra_context)
-
-
 @admin.register(UserPriceOverride)
 class UserPriceOverrideAdmin(admin.ModelAdmin):
     list_display = ['user', 'xrp_custom_price_display', 'status_display', 'updated_at']
@@ -295,24 +204,33 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'email_transactions', 'email_security', 'two_factor_enabled', 'updated_at']
-    list_filter = ['email_transactions', 'email_security', 'email_marketing', 'two_factor_enabled', 'created_at']
-    search_fields = ['user__username', 'user__email', 'bio']
+    list_display = ['username', 'wallet_balance_display', 'updated_at']
+    list_filter = ['created_at']
+    search_fields = ['user__username', 'user__email']
     ordering = ['-updated_at']
+    
+    def username(self, obj):
+        return obj.user.username
+    username.short_description = 'User'
+    username.admin_order_field = 'user__username'
+    
+    def wallet_balance_display(self, obj):
+        return f'${obj.wallet_balance:,.2f}'
+    wallet_balance_display.short_description = 'Wallet Balance (USD)'
+    wallet_balance_display.admin_order_field = 'wallet_balance'
     
     fieldsets = (
         ('User Information', {
-            'fields': ('user', 'bio', 'profile_image')
+            'fields': ('user',)
         }),
-        ('Notification Preferences', {
-            'fields': ('email_transactions', 'email_security', 'email_marketing')
-        }),
-        ('Security Settings', {
-            'fields': ('two_factor_enabled',)
+        ('Wallet Balance', {
+            'fields': ('wallet_balance',),
+            'description': 'Main wallet balance shown in user dashboard'
         }),
     )
     
-    readonly_fields = ['created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at', 'user']
+
 
 
 @admin.register(UserHolding)
