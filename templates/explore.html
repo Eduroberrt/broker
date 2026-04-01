@@ -1,4 +1,5 @@
 {% load static %}
+{% load price_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,7 +174,7 @@
                             data-categories="{{ asset.categories }}" 
                             data-name="{{ asset.name }}" 
                             data-symbol="{{ asset.symbol }}"
-                            data-price="{{ asset.formatted_price }}"
+                            data-price="{{ asset|user_formatted_price:request.user }}"
                             data-change="{{ asset.percentage_change }}"
                             data-week-change="{{ asset.week_change|floatformat:2 }}"
                             data-market-cap="{{ asset.market_cap|floatformat:0 }}"
@@ -200,7 +201,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="p-4 text-right font-semibold">{{ asset.formatted_price }}</td>
+                            <td class="p-4 text-right font-semibold">{{ asset|user_formatted_price:request.user }}</td>
                             <td class="p-4 text-right hidden sm:table-cell">
                                 {% if asset.is_positive_change %}
                                 <span class="text-green-400 flex items-center gap-1 justify-end">

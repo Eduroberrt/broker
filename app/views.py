@@ -110,8 +110,8 @@ def dashboard(request):
     # Create a dictionary for quick wallet lookup by crypto_asset id
     wallet_dict = {wallet.crypto_asset.id: wallet.balance for wallet in user_wallets}
     
-    # Calculate total wallet value (balance is already in USD)
-    total_balance = sum(wallet.balance for wallet in user_wallets)
+    # Get wallet balance from UserProfile (what admin manages)
+    total_balance = request.user.profile.wallet_balance if hasattr(request.user, 'profile') else Decimal('0')
     
     # Calculate total gain/loss
     total_base_value = Decimal('0')
@@ -461,17 +461,17 @@ def portfolio_view(request):
     # Get user's wallet balances (same as dashboard)
     user_wallets = UserWallet.objects.filter(user=request.user).select_related('crypto_asset')
     
+    # Get total balance from UserProfile (what admin manages)
+    total_value = request.user.profile.wallet_balance if hasattr(request.user, 'profile') else Decimal('0')
+    
     # Calculate portfolio metrics
     holdings = []
-    total_value = Decimal('0')
     
     for wallet in user_wallets:
         if wallet.balance > 0:  # Only include non-zero balances
             asset = wallet.crypto_asset
             # Balance is in USD, calculate crypto amount using current price
             crypto_amount = wallet.balance / asset.current_price if asset.current_price > 0 else Decimal('0')
-            
-            total_value += wallet.balance
             
             holdings.append({
                 'id': wallet.id,

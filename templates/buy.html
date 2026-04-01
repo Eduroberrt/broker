@@ -1,4 +1,5 @@
 {% load static %}
+{% load price_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +73,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="text-gray-900 text-sm font-semibold mb-1">{{ asset.symbol }}</div>
-                                <div class="text-gray-900/60 text-xs">{{ asset.formatted_price }}</div>
+                                <div class="text-gray-900/60 text-xs">{{ asset|user_formatted_price:request.user }}</div>
                             </button>
                             {% endfor %}
                         </div>

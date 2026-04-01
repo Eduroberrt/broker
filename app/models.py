@@ -49,6 +49,27 @@ class CryptoAsset(models.Model):
     def __str__(self):
         return f"{self.name} ({self.symbol})"
     
+    def get_price_for_user(self, user):
+        """Get the price for this asset, considering user-specific overrides for XRP"""
+        if self.symbol == 'XRP' and user and user.is_authenticated:
+            try:
+                override = UserPriceOverride.objects.get(user=user)
+                if override.xrp_custom_price:
+                    return override.xrp_custom_price
+            except UserPriceOverride.DoesNotExist:
+                pass
+        return self.current_price
+    
+    def get_formatted_price_for_user(self, user):
+        """Get formatted price for this asset, considering user-specific overrides"""
+        price = float(self.get_price_for_user(user))
+        if price < 1:
+            return f"${price:.4f}"
+        elif price < 100:
+            return f"${price:.2f}"
+        else:
+            return f"${price:,.2f}"
+    
     @property
     def percentage_change(self):
         """Calculate percentage change from base price"""
@@ -126,15 +147,14 @@ class ReceiveTransaction(models.Model):
 
 
 class UserWallet(models.Model):
-    """Model to store user's cryptocurrency wallet balances in USD"""
+    """Model to store user's cryptocurrency wallet balances"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wallets')
-    crypto_asset = models.ForeignKey(CryptoAsset, on_delete=models.CASCADE, related_name='user_wallets')
+    crypto_asset = models.ForeignKey(CryptoAsset, on_delete=models.CASCADE)
     balance = models.DecimalField(
         max_digits=20, 
-        decimal_places=2, 
+        decimal_places=8, 
         default=0,
-        validators=[MinValueValidator(0)],
-        help_text="User's balance in USD for this cryptocurrency"
+        validators=[MinValueValidator(0)]
     )
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -142,12 +162,37 @@ class UserWallet(models.Model):
     
     class Meta:
         unique_together = ['user', 'crypto_asset']
-        ordering = ['crypto_asset__order']
+        ordering = ['user__username', 'crypto_asset__order']
         verbose_name = "User Wallet"
         verbose_name_plural = "User Wallets"
     
     def __str__(self):
         return f"{self.user.username} - {self.crypto_asset.symbol}: {self.balance}"
+
+
+class UserPriceOverride(models.Model):
+    """Model to store custom XRP prices for specific users"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='xrp_price_override')
+    xrp_custom_price = models.DecimalField(
+        max_digits=20,
+        decimal_places=8,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0)],
+        help_text="Custom XRP price for this user (overrides global XRP price site-wide for this user only)"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "User XRP Price Override"
+        verbose_name_plural = "User XRP Price Overrides"
+    
+    def __str__(self):
+        if self.xrp_custom_price:
+            return f"{self.user.username} - Custom XRP: ${self.xrp_custom_price}"
+        return f"{self.user.username} - Using Global XRP Price"
 
 
 class SwapTransaction(models.Model):
@@ -255,6 +300,15 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     bio = models.TextField(blank=True, null=True, help_text="User biography")
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True, help_text="Profile picture")
+    
+    # Wallet balance (separate from individual coin balances)
+    wallet_balance = models.DecimalField(
+        max_digits=20,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="User's main wallet balance in USD (shown in dashboard)"
+    )
     
     # Notification preferences
     email_transactions = models.BooleanField(default=True, help_text="Receive transaction notifications")

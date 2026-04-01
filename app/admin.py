@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction, Notification, UserProfile, UserHolding, ContactMessage
+from django.shortcuts import render, redirect
+from django import forms
+from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction, Notification, UserProfile, UserHolding, ContactMessage, UserPriceOverride
 
 @admin.register(CryptoAsset)
 class CryptoAssetAdmin(admin.ModelAdmin):
@@ -89,26 +91,147 @@ class ReceiveTransactionAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         """When status changes to confirmed, update user wallet with USD amount"""
         if change and 'status' in form.changed_data and obj.status == 'confirmed' and obj.amount:
-            # Get or create user wallet for this crypto
+            from app.models import UserProfile
+            # 1) Add to specific crypto's wallet balance
             wallet, created = UserWallet.objects.get_or_create(
                 user=obj.user,
                 crypto_asset=obj.crypto_asset
             )
-            # Add the USD amount directly to wallet balance
             wallet.balance += obj.amount
             wallet.save()
+            
+            # 2) Add to user's main wallet balance
+            profile, created = UserProfile.objects.get_or_create(user=obj.user)
+            profile.wallet_balance += obj.amount
+            profile.save()
         
         super().save_model(request, obj, form, change)
 
-
 @admin.register(UserWallet)
 class UserWalletAdmin(admin.ModelAdmin):
-    list_display = ['user', 'crypto_asset', 'balance', 'updated_at']
-    list_filter = ['crypto_asset']
+    list_display = ['username', 'wallet_balance_display']
     search_fields = ['user__username']
-    ordering = ['user', 'crypto_asset__order']
+    actions = None
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def get_queryset(self, request):
+        # Get all UserProfile objects (one per user)
+        from app.models import UserProfile
+        # We'll use UserProfile as the base, but need to adapt for UserWallet registration
+        # Actually, let's filter UserWallet to show one per user (any crypto, doesn't matter)
+        qs = super().get_queryset(request)
+        # Get one wallet per user (using distinct on user)
+        seen_users = set()
+        filtered_qs = []
+        for wallet in qs.select_related('user', 'user__profile'):
+            if wallet.user.id not in seen_users:
+                seen_users.add(wallet.user.id)
+                filtered_qs.append(wallet.id)
+        return qs.filter(id__in=filtered_qs)
+    
+    def username(self, obj):
+        return obj.user.username
+    username.short_description = 'User'
+    username.admin_order_field = 'user__username'
+    
+    def wallet_balance_display(self, obj):
+        """Display user's wallet balance from UserProfile"""
+        from app.models import UserProfile
+        if hasattr(obj.user, 'profile'):
+            profile = obj.user.profile
+        else:
+            profile, created = UserProfile.objects.get_or_create(user=obj.user)
+        return f'${profile.wallet_balance:,.2f}'
+    wallet_balance_display.short_description = 'Wallet Balance (USD)'
+    
+    # Form configuration
+    fields = ['user', 'wallet_balance']
+    readonly_fields = ['user']
+    
+    def get_form(self, request, obj=None, **kwargs):
+        from django import forms
+        from app.models import UserProfile
+        
+        class UserWalletBalanceForm(forms.ModelForm):
+            wallet_balance = forms.DecimalField(
+                max_digits=20,
+                decimal_places=2,
+                label='Wallet Balance (USD)',
+                widget=forms.NumberInput(attrs={'step': '0.01'}),
+                help_text='Enter the new wallet balance for this user'
+            )
+            
+            class Meta:
+                model = UserWallet
+                fields = ['user', 'wallet_balance']
+            
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                if self.instance and self.instance.pk and self.instance.user:
+                    profile, created = UserProfile.objects.get_or_create(user=self.instance.user)
+                    self.fields['wallet_balance'].initial = profile.wallet_balance
+                if 'user' in self.fields:
+                    self.fields['user'].disabled = True
+        
+        kwargs['form'] = UserWalletBalanceForm
+        return super().get_form(request, obj, **kwargs)
+    
+    def save_model(self, request, obj, form, change):
+        """Save the wallet balance to UserProfile"""
+        if change and 'wallet_balance' in form.cleaned_data:
+            from app.models import UserProfile
+            new_balance = form.cleaned_data['wallet_balance']
+            profile, created = UserProfile.objects.get_or_create(user=obj.user)
+            profile.wallet_balance = new_balance
+            profile.save()
+            self.message_user(request, f"Wallet balance for {obj.user.username} set to ${new_balance:,.2f}")
+        # Don't save the UserWallet object itself
+    
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['title'] = 'User Wallet Balances'
+        return super().changelist_view(request, extra_context=extra_context)
+
+
+@admin.register(UserPriceOverride)
+class UserPriceOverrideAdmin(admin.ModelAdmin):
+    list_display = ['user', 'xrp_custom_price_display', 'status_display', 'updated_at']
+    search_fields = ['user__username']
+    ordering = ['user__username']
+    
+    fieldsets = (
+        ('User', {
+            'fields': ('user',)
+        }),
+        ('XRP Price Override', {
+            'fields': ('xrp_custom_price',),
+            'description': 'Set a custom XRP price for this user. Leave blank to use global XRP price. This price will show site-wide for this user only.'
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
     
     readonly_fields = ['created_at', 'updated_at']
+    
+    def xrp_custom_price_display(self, obj):
+        if obj.xrp_custom_price:
+            formatted_price = '${:,.8f}'.format(float(obj.xrp_custom_price))
+            return format_html('<span style="font-weight: bold; color: #bd24df;">{}</span>', formatted_price)
+        return format_html('<span style="color: gray;">Not Set</span>')
+    xrp_custom_price_display.short_description = 'Custom XRP Price'
+    
+    def status_display(self, obj):
+        if obj.xrp_custom_price:
+            return format_html('<span style="color: green; font-weight: bold;">✓ Active</span>')
+        return format_html('<span style="color: gray;">○ Using Global</span>')
+    status_display.short_description = 'Status'
 
 
 @admin.register(SellTransaction)
@@ -130,13 +253,19 @@ class SellTransactionAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         """When status changes to confirmed, deduct from user wallet"""
         if change and 'status' in form.changed_data and obj.status == 'confirmed':
-            # Get user wallet for this crypto
+            from app.models import UserProfile
+            # 1) Deduct from specific crypto's wallet balance
             wallet = UserWallet.objects.filter(user=obj.user, crypto_asset=obj.crypto_asset).first()
             
             if wallet and wallet.balance >= obj.amount_to_sell:
-                # Deduct the amount from wallet balance
                 wallet.balance -= obj.amount_to_sell
                 wallet.save()
+            
+            # 2) Deduct from user's main wallet balance (independent of crypto balance check)
+            profile, created = UserProfile.objects.get_or_create(user=obj.user)
+            if profile.wallet_balance >= obj.amount_to_sell:
+                profile.wallet_balance -= obj.amount_to_sell
+                profile.save()
         
         super().save_model(request, obj, form, change)
 
