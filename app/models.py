@@ -337,6 +337,13 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=User)
+def create_user_price_override(sender, instance, created, **kwargs):
+    """Automatically create UserPriceOverride when User is created"""
+    if created:
+        UserPriceOverride.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     """Save UserProfile when User is saved"""
     if hasattr(instance, 'profile'):
