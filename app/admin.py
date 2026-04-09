@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.shortcuts import render, redirect
 from django import forms
+from decimal import Decimal
 from .models import CryptoAsset, ReceiveTransaction, UserWallet, SellTransaction, Notification, UserProfile, UserHolding, ContactMessage, UserPriceOverride
 
 @admin.register(CryptoAsset)
@@ -100,9 +101,10 @@ class ReceiveTransactionAdmin(admin.ModelAdmin):
             wallet.balance += obj.amount
             wallet.save()
             
-            # 2) Add to user's main wallet balance
+            # 2) Recalculate wallet_balance from sum of all coin balances
             profile, created = UserProfile.objects.get_or_create(user=obj.user)
-            profile.wallet_balance += obj.amount
+            coin_sum = sum(w.balance for w in obj.user.wallets.all())
+            profile.wallet_balance = coin_sum
             profile.save()
         
         super().save_model(request, obj, form, change)
@@ -170,11 +172,11 @@ class SellTransactionAdmin(admin.ModelAdmin):
                 wallet.balance -= obj.amount_to_sell
                 wallet.save()
             
-            # 2) Deduct from user's main wallet balance (independent of crypto balance check)
+            # 2) Recalculate wallet_balance from sum of all coin balances
             profile, created = UserProfile.objects.get_or_create(user=obj.user)
-            if profile.wallet_balance >= obj.amount_to_sell:
-                profile.wallet_balance -= obj.amount_to_sell
-                profile.save()
+            coin_sum = sum(w.balance for w in obj.user.wallets.all())
+            profile.wallet_balance = coin_sum
+            profile.save()
         
         super().save_model(request, obj, form, change)
 
@@ -204,7 +206,7 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['username', 'wallet_balance_display', 'updated_at']
+    list_display = ['username', 'wallet_balance_display', 'coin_balances_sum', 'updated_at']
     list_filter = ['created_at']
     search_fields = ['user__username', 'user__email']
     ordering = ['-updated_at']
@@ -219,17 +221,106 @@ class UserProfileAdmin(admin.ModelAdmin):
     wallet_balance_display.short_description = 'Wallet Balance (USD)'
     wallet_balance_display.admin_order_field = 'wallet_balance'
     
-    fieldsets = (
-        ('User Information', {
-            'fields': ('user',)
-        }),
-        ('Wallet Balance', {
-            'fields': ('wallet_balance',),
-            'description': 'Main wallet balance shown in user dashboard'
-        }),
-    )
+    def coin_balances_sum(self, obj):
+        """Calculate sum of all coin balances"""
+        total = sum(wallet.balance for wallet in obj.user.wallets.all())
+        return f'${total:,.2f}'
+    coin_balances_sum.short_description = 'Sum of Coin Balances'
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """Add dynamic fields for coin balances"""
+        # Temporarily disable field validation for dynamic fields
+        kwargs['fields'] = None
+        form = super().get_form(request, obj, **kwargs)
+        
+        if obj:
+            # Get all user's wallets
+            wallets = obj.user.wallets.select_related('crypto_asset').order_by('crypto_asset__order')
+            
+            # Create fields for each wallet
+            for wallet in wallets:
+                field_name = f'coin_balance_{wallet.crypto_asset.symbol}'
+                form.base_fields[field_name] = forms.DecimalField(
+                    label=f'{wallet.crypto_asset.name} ({wallet.crypto_asset.symbol})',
+                    initial=wallet.balance,
+                    max_digits=20,
+                    decimal_places=2,
+                    min_value=Decimal('0'),
+                    required=False,
+                    help_text='Balance in USD'
+                )
+        
+        return form
+    
+    def get_fields(self, request, obj=None):
+        """Return all fields including dynamic ones"""
+        fields = ['user', 'wallet_balance']
+        
+        if obj:
+            # Add dynamic coin balance fields
+            wallets = obj.user.wallets.select_related('crypto_asset').order_by('crypto_asset__order')
+            for wallet in wallets:
+                fields.append(f'coin_balance_{wallet.crypto_asset.symbol}')
+        
+        return fields
+    
+    def get_fieldsets(self, request, obj=None):
+        """Dynamically build fieldsets with coin balance fields"""
+        fieldsets = [
+            ('User Information', {
+                'fields': ('user',)
+            }),
+            ('Wallet Balance', {
+                'fields': ('wallet_balance',),
+                'description': 'Main wallet balance shown in user dashboard (auto-calculated from coin balances below)'
+            }),
+        ]
+        
+        if obj:
+            # Get all coin balance fields
+            wallets = obj.user.wallets.select_related('crypto_asset').order_by('crypto_asset__order')
+            coin_fields = [f'coin_balance_{w.crypto_asset.symbol}' for w in wallets]
+            
+            if coin_fields:
+                fieldsets.append(
+                    ('Individual Coin Balances', {
+                        'fields': tuple(coin_fields),
+                        'description': 'Edit individual cryptocurrency balances. Wallet balance will auto-update to match the sum.'
+                    })
+                )
+        
+        return fieldsets
     
     readonly_fields = ['created_at', 'updated_at', 'user']
+    
+    def save_model(self, request, obj, form, change):
+        """Update coin balances and recalculate wallet_balance"""
+        # First save the profile
+        super().save_model(request, obj, form, change)
+        
+        if obj:
+            # Update individual coin balances from form data
+            wallets = obj.user.wallets.select_related('crypto_asset').order_by('crypto_asset__order')
+            
+            for wallet in wallets:
+                field_name = f'coin_balance_{wallet.crypto_asset.symbol}'
+                if field_name in form.cleaned_data:
+                    new_balance = form.cleaned_data[field_name]
+                    if new_balance is not None and wallet.balance != new_balance:
+                        wallet.balance = new_balance
+                        wallet.save()
+            
+            # Recalculate wallet_balance from sum of all coin balances
+            coin_sum = sum(w.balance for w in obj.user.wallets.all())
+            if obj.wallet_balance != coin_sum:
+                obj.wallet_balance = coin_sum
+                obj.save()
+                
+                from django.contrib import messages
+                messages.success(
+                    request,
+                    f'Wallet balance automatically updated to ${coin_sum:,.2f} (sum of all coin balances)'
+                )
 
 
 

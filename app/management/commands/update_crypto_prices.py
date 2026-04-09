@@ -5,10 +5,11 @@ from decimal import Decimal
 from datetime import datetime
 
 class Command(BaseCommand):
-    help = 'Update cryptocurrency prices from CoinGecko API (excludes XRP which is manually controlled)'
+    help = 'Update cryptocurrency and xStock prices from CoinGecko API (excludes XRP which is manually controlled)'
 
     # Map our symbols to CoinGecko IDs
     COINGECKO_MAP = {
+        # Cryptocurrencies
         'BTC': 'bitcoin',
         'ETH': 'ethereum',
         'USDT': 'tether',
@@ -17,24 +18,29 @@ class Command(BaseCommand):
         'USDC': 'usd-coin',
         'XLM': 'stellar',
         'HBAR': 'hedera-hashgraph',
-        'Hedera': 'hedera-hashgraph',  # Alternative name
+        'Hedera': 'hedera-hashgraph',
         'DOGE': 'dogecoin',
         'ADA': 'cardano',
         'AVAX': 'avalanche-2',
         'TRX': 'tron',
         'DOT': 'polkadot',
-        'MATIC': 'polygon',
+        'MATIC': 'polygon-ecosystem-token',
         'LTC': 'litecoin',
+        'GOLD': 'pax-gold',
+        # xStocks (tokenized stocks)
+        'TSLAx': 'tesla-xstock',
+        'SPCX': 'paimon-spacex-spv-token',
+        # SPXAI not available on CoinGecko - manually controlled
     }
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS(f'\n🔄 Starting price update at {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'))
         
-        # Get all crypto assets except XRP (which is manually controlled)
-        assets = CryptoAsset.objects.filter(asset_type='crypto').exclude(symbol='XRP')
+        # Get all assets except XRP (which is manually controlled)
+        assets = CryptoAsset.objects.exclude(symbol='XRP')
         
         if not assets.exists():
-            self.stdout.write(self.style.WARNING('No crypto assets found to update'))
+            self.stdout.write(self.style.WARNING('No assets found to update'))
             return
         
         # Prepare CoinGecko API request
@@ -47,7 +53,7 @@ class Command(BaseCommand):
                 coingecko_ids.append(coingecko_id)
                 symbol_to_id[coingecko_id] = asset.symbol
             else:
-                self.stdout.write(self.style.WARNING(f'⚠️  No CoinGecko mapping for {asset.symbol}'))
+                self.stdout.write(self.style.WARNING(f'⚠️  No CoinGecko mapping for {asset.symbol} - skipping'))
         
         if not coingecko_ids:
             self.stdout.write(self.style.WARNING('No valid CoinGecko IDs to fetch'))
@@ -76,6 +82,12 @@ class Command(BaseCommand):
                 
                 try:
                     asset = CryptoAsset.objects.get(symbol=symbol)
+                    
+                    # Check if price data exists
+                    if 'usd' not in price_data:
+                        self.stdout.write(self.style.WARNING(f'⚠️  No USD price data for {symbol}'))
+                        continue
+                    
                     new_price = Decimal(str(price_data['usd']))
                     old_price = asset.current_price
                     
@@ -101,7 +113,14 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(f'❌ Error updating {symbol}: {str(e)}'))
             
             self.stdout.write(self.style.SUCCESS(f'\n✅ Successfully updated {updated_count} of {len(coingecko_ids)} assets'))
-            self.stdout.write(self.style.WARNING(f'ℹ️  XRP prices are manually controlled by admin'))
+            
+            # Show manually controlled assets
+            manual_count = CryptoAsset.objects.filter(symbol__in=['XRP', 'SPXAI']).count()
+            self.stdout.write(self.style.WARNING(f'ℹ️  {manual_count} assets are manually controlled: XRP, SPXAI'))
+            
+            # Show total assets in database
+            total_assets = CryptoAsset.objects.count()
+            self.stdout.write(self.style.SUCCESS(f'📊 Total: {updated_count} auto + {manual_count} manual = {total_assets} assets'))
             
         except requests.exceptions.RequestException as e:
             self.stdout.write(self.style.ERROR(f'❌ API request failed: {str(e)}'))

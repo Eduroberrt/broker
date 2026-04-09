@@ -152,7 +152,7 @@ class UserWallet(models.Model):
     crypto_asset = models.ForeignKey(CryptoAsset, on_delete=models.CASCADE)
     balance = models.DecimalField(
         max_digits=20, 
-        decimal_places=8, 
+        decimal_places=2, 
         default=0,
         validators=[MinValueValidator(0)]
     )

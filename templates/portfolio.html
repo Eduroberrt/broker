@@ -84,7 +84,7 @@
                     <a href="{% url 'asset_detail' holding.symbol %}" class="flex items-center justify-between hover:bg-gray-800 p-3 -mx-3 rounded-xl transition-colors">
                         <div class="flex items-center gap-3 flex-1">
                             {% if holding.icon_url %}
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-white p-1.5">
+                            <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
                                 <img src="{{ holding.icon_url }}" alt="{{ holding.name }}" class="w-full h-full object-contain">
                             </div>
                             {% else %}

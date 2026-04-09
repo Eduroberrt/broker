@@ -187,7 +187,7 @@
                             <td class="p-4">
                                 <div class="flex items-center gap-3">
                                     {% if asset.icon_url %}
-                                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center p-2 flex-shrink-0">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
                                         <img src="{{ asset.icon_url }}" alt="{{ asset.name }}" class="w-full h-full object-contain">
                                     </div>
                                     {% else %}
@@ -263,7 +263,7 @@
                     onclick="openAssetModal(this)">
                     <div class="flex items-center gap-3 mb-4">
                         {% if trending.icon_url %}
-                        <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center p-2">
+                        <div class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center">
                             <img src="{{ trending.icon_url }}" alt="{{ trending.name }}" class="w-full h-full object-contain">
                         </div>
                         {% else %}
