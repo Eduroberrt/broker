@@ -35,26 +35,13 @@
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <!-- Tawk Mobile Override - Target specific z-index -->
-    <style>
-        @media (max-width: 768px) {
-            /* Tawk uses z-index: 2000000000 */
-            body > div[style*="z-index"][style*="2000000000"] {
-                bottom: 80px !important;
-            }
-            body > div[style*="position: fixed"][style*="z-index: 2000000000"] {
-                bottom: 80px !important;
-            }
-        }
-    </style>
 </head>
 <body class="bg-white">
     
     {% include 'partials/dashboard_header.html' %}
     
     <!-- Main Content -->
-    <main class="pt-16 pb-20 md:pb-8 min-h-screen bg-white">
+    <main class="pt-16 pb-32 md:pb-8 min-h-screen bg-white">
         <div class="max-w-7xl mx-auto px-4 py-6">
             
             <!-- Welcome Section - Desktop Only -->
@@ -495,73 +482,14 @@
     s0.parentNode.insertBefore(s1,s0);
     })();
     
-    // NUCLEAR OPTION: Inject CSS that overrides inline styles
-    (function() {
-        let styleInjected = false;
-        
-        function injectOverrideCSS() {
-            if (styleInjected) return;
-            
-            // Create a style element with maximum specificity
+    // Simple mobile positioning - only on load
+    Tawk_API.onLoad = function(){
+        if (window.innerWidth <= 768) {
             const style = document.createElement('style');
-            style.id = 'tawk-mobile-override';
-            style.textContent = `
-                @media (max-width: 768px) {
-                    /* Target the Tawk container by z-index */
-                    body > div[style*="z-index: 2000000000"],
-                    body > div[style*="position: fixed"] {
-                        bottom: 80px !important;
-                    }
-                }
-            `;
+            style.textContent = '@media (max-width: 768px) { body > div[style*="z-index: 2000000000"] { bottom: 80px !important; } }';
             document.head.appendChild(style);
-            styleInjected = true;
-            console.log('✅ CSS Override Injected!');
         }
-        
-        function applyTawkMobilePosition() {
-            if (window.innerWidth > 768) return;
-            
-            // Inject CSS on first detection
-            injectOverrideCSS();
-            
-            // Also apply via JavaScript as backup
-            const allDivs = document.querySelectorAll('body > div');
-            allDivs.forEach(div => {
-                const style = window.getComputedStyle(div);
-                if (style.position === 'fixed' && parseInt(style.zIndex) > 999999) {
-                    // Force with cssText to override everything
-                    const currentStyle = div.getAttribute('style') || '';
-                    const newStyle = currentStyle.replace(/bottom\s*:\s*[^;]+;?/gi, '') + '; bottom: 80px !important;';
-                    div.setAttribute('style', newStyle);
-                    console.log('✅ Applied via setAttribute');
-                }
-            });
-        }
-        
-        // Watch for Tawk widget
-        const observer = new MutationObserver(applyTawkMobilePosition);
-        observer.observe(document.body, { 
-            childList: true, 
-            subtree: true, 
-            attributes: true,
-            attributeFilter: ['style']
-        });
-        
-        // Apply on Tawk load
-        Tawk_API.onLoad = function(){
-            console.log('🔔 Tawk loaded');
-            setTimeout(applyTawkMobilePosition, 100);
-            setTimeout(applyTawkMobilePosition, 500);
-            setTimeout(applyTawkMobilePosition, 1000);
-        };
-        
-        // Keep trying
-        setInterval(applyTawkMobilePosition, 2000);
-        setTimeout(applyTawkMobilePosition, 500);
-        
-        console.log('🚀 Tawk override script loaded');
-    })();
+    };
     </script>
     <!--End of Tawk.to Script-->
 
