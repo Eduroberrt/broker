@@ -87,7 +87,7 @@
                         
                         <!-- Wallet Address -->
                         <div class="mb-6">
-                            <label class="block text-gray-900 mb-2 font-semibold">Your Wallet Address</label>
+                            <label class="block text-gray-900 mb-2 font-semibold">{{ translations.your_wallet_address_label }}</label>
                             <div class="relative">
                                 <input id="wallet-address" name="wallet_address" type="text" value="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" readonly class="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 pr-12 text-gray-900 focus:outline-none focus:border-primary">
                                 <button type="button" id="copy-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:opacity-80">
@@ -153,7 +153,7 @@
                                     </span>
                                 </div>
                                 {% if transaction.amount %}
-                                <p class="text-gray-900 text-sm mb-1">Amount: <span class="font-semibold">{{ transaction.amount }} {{ transaction.crypto_asset.symbol }}</span></p>
+                                <p class="text-gray-900 text-sm mb-1">{{ translations.amount_label }}: <span class="font-semibold">{{ transaction.amount }} {{ transaction.crypto_asset.symbol }}</span></p>
                                 {% endif %}
                                 <p class="text-gray-900/60 text-xs">{{ transaction.created_at|date:"M d, Y h:i A" }}</p>
                             </div>
@@ -177,8 +177,8 @@
     <div id="processing-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center">
         <div class="bg-gray-50 rounded-lg p-8 max-w-sm mx-4 border border-gray-200 text-center">
             <div class="w-16 h-16 border-4 border-gray-300 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
-            <h3 class="text-gray-900 text-xl font-semibold mb-2">Processing...</h3>
-            <p class="text-gray-900/60 text-sm">Submitting your transaction</p>
+            <h3 class="text-gray-900 text-xl font-semibold mb-2">{{ translations.processing }}</h3>
+            <p class="text-gray-900/60 text-sm">{{ translations.submitting_transaction }}</p>
         </div>
     </div>
 
@@ -190,10 +190,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <h3 class="text-gray-900 text-xl font-semibold mb-2">Transaction Submitted!</h3>
-            <p class="text-gray-900/60 text-sm mb-6">Your transaction is being reviewed by our admin. You'll be notified once it's confirmed.</p>
+            <h3 class="text-gray-900 text-xl font-semibold mb-2">{{ translations.transaction_submitted }}</h3>
+            <p class="text-gray-900/60 text-sm mb-6">{{ translations.transaction_review_message }}</p>
             <button onclick="closeConfirmationModal()" class="w-full py-3 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" style="background: linear-gradient(to right, #bd24df, #2d6ade);">
-                OK
+                {{ translations.ok }}
             </button>
         </div>
     </div>
@@ -205,25 +205,25 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
-                <span class="text-xs">Home</span>
+                <span class="text-xs">{{ translations.home }}</span>
             </a>
             <a href="{% url 'portfolio' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                <span class="text-xs">Portfolio</span>
+                <span class="text-xs">{{ translations.portfolio }}</span>
             </a>
             <a href="{% url 'explore' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                 </svg>
-                <span class="text-xs">Explore</span>
+                <span class="text-xs">{{ translations.explore }}</span>
             </a>
             <a href="{% url 'more' %}" class="flex flex-col items-center gap-1 text-gray-900/60 hover:text-[#bd24df] transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
                 </svg>
-                <span class="text-xs">More</span>
+                <span class="text-xs">{{ translations.more }}</span>
             </a>
         </div>
     </nav>
@@ -310,22 +310,6 @@
             confirmationModal.classList.add('hidden');
             window.location.reload(); // Reload to show new transaction in history
         }
-
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuClose = document.getElementById('mobile-menu-close');
-        
-        if (mobileMenuToggle) {
-            mobileMenuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('translate-x-full');
-            });
-        }
-        
-        if (mobileMenuClose) {
-            mobileMenuClose.addEventListener('click', () => {
-                mobileMenu.classList.add('translate-x-full');
-            });
     }
 </script>
 
@@ -344,6 +328,16 @@ s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
+
+// Move widget up on mobile
+Tawk_API.onLoad = function(){
+    if (window.innerWidth <= 768) {
+        const iframe = document.querySelector('iframe[title="chat widget"]');
+        if (iframe && iframe.parentElement) {
+            iframe.parentElement.style.bottom = '80px';
+        }
+    }
+};
 </script>
 <!--End of Tawk.to Script-->
 </body>

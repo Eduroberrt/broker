@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tawk Widget Test</title>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        /* Mobile positioning test */
+        @media (max-width: 768px) {
+            /* ALL possible Tawk selectors */
+            div[id^="tawk"],
+            div[class^="tawk"],
+            iframe[title="chat widget"],
+            iframe[src*="tawk.to"] {
+                bottom: 80px !important;
+            }
+            
+            /* Parent container forcing */
+            body > div:last-child {
+                bottom: 80px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Tawk Widget Positioning Test</h1>
+    <div class="info">
+        <h2>Instructions:</h2>
+        <ol>
+            <li>Open this page on mobile or resize browser to mobile width</li>
+            <li>Open browser DevTools (F12)</li>
+            <li>Click Console tab</li>
+            <li>Look for Tawk widget structure logged below</li>
+        </ol>
+    </div>
+    
+    <div id="output"></div>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    
+    // Debug: Find and log ALL divs and iframes after Tawk loads
+    Tawk_API.onLoad = function(){
+        console.log('=== TAWK WIDGET LOADED ===');
+        
+        // Find all body children
+        const bodyChildren = Array.from(document.body.children);
+        console.log('Total body children:', bodyChildren.length);
+        
+        bodyChildren.forEach((child, index) => {
+            if (child.tagName === 'DIV' && child.querySelector('iframe[src*="tawk"]')) {
+                console.log(`FOUND TAWK CONTAINER at index ${index}:`, child);
+                console.log('  - ID:', child.id);
+                console.log('  - Classes:', child.className);
+                console.log('  - Inline style:', child.getAttribute('style'));
+                console.log('  - Computed style bottom:', window.getComputedStyle(child).bottom);
+                console.log('  - Computed style position:', window.getComputedStyle(child).position);
+                
+                // Show in page
+                document.getElementById('output').innerHTML += `
+                    <div class="info">
+                        <h3>Tawk Container Found!</h3>
+                        <p><strong>ID:</strong> ${child.id || 'none'}</p>
+                        <p><strong>Classes:</strong> ${child.className || 'none'}</p>
+                        <p><strong>Style:</strong> ${child.getAttribute('style') || 'none'}</p>
+                        <p><strong>Bottom position:</strong> ${window.getComputedStyle(child).bottom}</p>
+                    </div>
+                `;
+                
+                // Try to move it
+                if (window.innerWidth <= 768) {
+                    console.log('MOBILE DETECTED - Attempting to move widget...');
+                    child.style.setProperty('bottom', '80px', 'important');
+                    console.log('  - New bottom:', window.getComputedStyle(child).bottom);
+                }
+            }
+        });
+        
+        // Also check iframes
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            if (iframe.src.includes('tawk')) {
+                console.log('TAWK IFRAME:', iframe);
+                console.log('  - Title:', iframe.title);
+                console.log('  - Parent:', iframe.parentElement);
+            }
+        });
+    };
+    </script>
+    <!--End of Tawk.to Script-->
+</body>
+</html>

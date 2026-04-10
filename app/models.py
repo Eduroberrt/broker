@@ -171,7 +171,7 @@ class UserWallet(models.Model):
 
 
 class UserPriceOverride(models.Model):
-    """Model to store custom XRP prices for specific users"""
+    """Model to store custom prices for specific users"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='xrp_price_override')
     xrp_custom_price = models.DecimalField(
         max_digits=20,
@@ -181,18 +181,31 @@ class UserPriceOverride(models.Model):
         validators=[MinValueValidator(0)],
         help_text="Custom XRP price for this user (overrides global XRP price site-wide for this user only)"
     )
+    tslax_custom_price = models.DecimalField(
+        max_digits=20,
+        decimal_places=8,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0)],
+        help_text="Custom TSLAx price for this user (overrides global TSLAx price site-wide for this user only)"
+    )
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = "User XRP Price Override"
-        verbose_name_plural = "User XRP Price Overrides"
+        verbose_name = "User Price Override"
+        verbose_name_plural = "User Price Overrides"
     
     def __str__(self):
+        prices = []
         if self.xrp_custom_price:
-            return f"{self.user.username} - Custom XRP: ${self.xrp_custom_price}"
-        return f"{self.user.username} - Using Global XRP Price"
+            prices.append(f"XRP: ${self.xrp_custom_price}")
+        if self.tslax_custom_price:
+            prices.append(f"TSLAx: ${self.tslax_custom_price}")
+        if prices:
+            return f"{self.user.username} - {', '.join(prices)}"
+        return f"{self.user.username} - Using Global Prices"
 
 
 class SwapTransaction(models.Model):
@@ -341,6 +354,14 @@ def create_user_price_override(sender, instance, created, **kwargs):
     """Automatically create UserPriceOverride when User is created"""
     if created:
         UserPriceOverride.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def create_user_wallets(sender, instance, created, **kwargs):
+    """Automatically create UserWallet entries for all CryptoAssets when User is created"""
+    if created:
+        for asset in CryptoAsset.objects.all():
+            UserWallet.objects.get_or_create(user=instance, crypto_asset=asset)
 
 
 @receiver(post_save, sender=User)

@@ -75,6 +75,20 @@
     <!-- Custom JS -->
     <script src="{% static 'js/main.js' %}"></script>
     
+    <!-- Tawk Widget Mobile Positioning Script -->
+    <script type="text/javascript">
+    if (typeof Tawk_API !== 'undefined') {
+        Tawk_API.onLoad = function(){
+            if (window.innerWidth <= 768) {
+                const tawkWidget = document.querySelector('iframe[title="chat widget"]');
+                if (tawkWidget && tawkWidget.parentElement) {
+                    tawkWidget.parentElement.style.bottom = '80px';
+                }
+            }
+        };
+    }
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

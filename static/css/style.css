@@ -81,3 +81,10 @@ section {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+/* Move Tawk widget up on mobile to avoid blocking bottom navigation */
+@media (max-width: 768px) {
+    #tawk-bubble, .tawk-custom-color {
+        bottom: 80px !important;
+    }
+}

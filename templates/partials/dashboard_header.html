@@ -122,6 +122,9 @@
             </a>
         </nav>
     </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 z-40 hidden transition-opacity duration-300"></div>
 </header>
 
 <script>
@@ -130,23 +133,44 @@
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
         
-        if (mobileMenuToggle && mobileMenu && mobileMenuClose) {
+        function openMobileMenu() {
+            if (mobileMenu && mobileMenuOverlay) {
+                mobileMenu.classList.remove('translate-x-full');
+                mobileMenuOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeMobileMenu() {
+            if (mobileMenu && mobileMenuOverlay) {
+                mobileMenu.classList.add('translate-x-full');
+                mobileMenuOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        if (mobileMenuToggle) {
             mobileMenuToggle.addEventListener('click', function(e) {
                 e.preventDefault();
-                mobileMenu.classList.remove('translate-x-full');
+                e.stopPropagation();
+                openMobileMenu();
             });
-            
+        }
+        
+        if (mobileMenuClose) {
             mobileMenuClose.addEventListener('click', function(e) {
                 e.preventDefault();
-                mobileMenu.classList.add('translate-x-full');
+                e.stopPropagation();
+                closeMobileMenu();
             });
-            
-            // Close on clicking outside
-            mobileMenu.addEventListener('click', function(e) {
-                if (e.target === mobileMenu) {
-                    mobileMenu.classList.add('translate-x-full');
-                }
+        }
+        
+        if (mobileMenuOverlay) {
+            mobileMenuOverlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeMobileMenu();
             });
         }
     });

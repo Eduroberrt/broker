@@ -14,15 +14,15 @@ class CryptoAssetAdmin(admin.ModelAdmin):
     ordering = ['order', 'name']
     
     def get_fieldsets(self, request, obj=None):
-        # Only allow editing XRP prices manually
-        if obj and obj.symbol == 'XRP':
+        # Allow editing XRP and TSLAx prices manually
+        if obj and obj.symbol in ['XRP', 'TSLAx']:
             return (
                 ('Basic Information', {
                     'fields': ('name', 'symbol', 'icon', 'icon_url', 'color', 'asset_type', 'is_in_watchlist', 'order')
                 }),
-                ('Price Information (Manual Control for XRP)', {
+                (f'Price Information (Manual Control for {obj.symbol})', {
                     'fields': ('current_price', 'base_price'),
-                    'description': 'XRP prices are manually controlled. Update current_price to change market price.'
+                    'description': f'{obj.symbol} prices are manually controlled. Update current_price to change market price.'
                 }),
             )
         else:
@@ -32,20 +32,20 @@ class CryptoAssetAdmin(admin.ModelAdmin):
                 }),
                 ('Price Information (Auto-Updated from API)', {
                     'fields': ('current_price', 'base_price'),
-                    'description': 'Prices are automatically updated from CoinGecko API. Manual editing is disabled for non-XRP assets.'
+                    'description': 'Prices are automatically updated from CoinGecko API. Manual editing is disabled for non-XRP and non-TSLAx assets.'
                 }),
             )
     
     def get_readonly_fields(self, request, obj=None):
-        # Make price fields readonly for all assets except XRP
-        if obj and obj.symbol != 'XRP':
+        # Make price fields readonly for all assets except XRP and TSLAx
+        if obj and obj.symbol not in ['XRP', 'TSLAx']:
             return ['current_price', 'base_price']
         return []
     
     def get_queryset(self, request):
-        # Only show XRP in admin list view
+        # Show XRP and TSLAx in admin list view
         qs = super().get_queryset(request)
-        return qs.filter(symbol='XRP')
+        return qs.filter(symbol__in=['XRP', 'TSLAx'])
     
     def percentage_change(self, obj):
         change = obj.percentage_change
@@ -62,7 +62,7 @@ class CryptoAssetAdmin(admin.ModelAdmin):
     percentage_change.short_description = 'Change %'
     
     def api_status(self, obj):
-        if obj.symbol == 'XRP':
+        if obj.symbol in ['XRP', 'TSLAx']:
             return format_html('<span style="color: orange; font-weight: bold;">⚙️ Manual</span>')
         else:
             return format_html('<span style="color: green; font-weight: bold;">🔄 Auto API</span>')
@@ -111,7 +111,7 @@ class ReceiveTransactionAdmin(admin.ModelAdmin):
 
 @admin.register(UserPriceOverride)
 class UserPriceOverrideAdmin(admin.ModelAdmin):
-    list_display = ['user', 'xrp_custom_price_display', 'status_display', 'updated_at']
+    list_display = ['user', 'xrp_custom_price_display', 'tslax_custom_price_display', 'status_display', 'updated_at']
     search_fields = ['user__username']
     ordering = ['user__username']
     
@@ -119,9 +119,9 @@ class UserPriceOverrideAdmin(admin.ModelAdmin):
         ('User', {
             'fields': ('user',)
         }),
-        ('XRP Price Override', {
-            'fields': ('xrp_custom_price',),
-            'description': 'Set a custom XRP price for this user. Leave blank to use global XRP price. This price will show site-wide for this user only.'
+        ('Price Overrides', {
+            'fields': ('xrp_custom_price', 'tslax_custom_price'),
+            'description': 'Set custom prices for this user. Leave blank to use global prices. These prices will show site-wide for this user only.'
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
@@ -138,9 +138,21 @@ class UserPriceOverrideAdmin(admin.ModelAdmin):
         return format_html('<span style="color: gray;">Not Set</span>')
     xrp_custom_price_display.short_description = 'Custom XRP Price'
     
+    def tslax_custom_price_display(self, obj):
+        if obj.tslax_custom_price:
+            formatted_price = '${:,.2f}'.format(float(obj.tslax_custom_price))
+            return format_html('<span style="font-weight: bold; color: #bd24df;">{}</span>', formatted_price)
+        return format_html('<span style="color: gray;">Not Set</span>')
+    tslax_custom_price_display.short_description = 'Custom TSLAx Price'
+    
     def status_display(self, obj):
+        statuses = []
         if obj.xrp_custom_price:
-            return format_html('<span style="color: green; font-weight: bold;">✓ Active</span>')
+            statuses.append('XRP')
+        if obj.tslax_custom_price:
+            statuses.append('TSLAx')
+        if statuses:
+            return format_html('<span style="color: green; font-weight: bold;">✓ {}</span>', ', '.join(statuses))
         return format_html('<span style="color: gray;">○ Using Global</span>')
     status_display.short_description = 'Status'
 
