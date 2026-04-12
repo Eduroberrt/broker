@@ -174,18 +174,6 @@
             });
         });
 
-        // Crypto selection
-        document.querySelectorAll('.crypto-buy-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.crypto-buy-btn').forEach(b => {
-                    b.classList.remove('border-2', 'border-primary');
-                    b.classList.add('border', 'border-gray-200');
-                });
-                this.classList.remove('border', 'border-gray-200');
-                this.classList.add('border-2', 'border-primary');
-            });
-        });
-
         // Form submission with continuous processing modal
         const buyForm = document.getElementById('buy-form');
         const processingModal = document.getElementById('processing-modal');
@@ -196,7 +184,6 @@
             // Show processing modal (continuous, no auto-close)
             processingModal.classList.remove('hidden');
         });
-    }
 </script>
 
 <!-- Custom JS -->
