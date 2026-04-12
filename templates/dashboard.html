@@ -473,6 +473,21 @@
     <!--Start of Tawk.to Script-->
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+
+    // This part moves the widget higher
+    Tawk_API.customStyle = {
+        visibility : {
+            desktop : {
+                position : 'br', // 'br' is bottom right
+                yOffset : 60     // Higher number = higher on page
+            },
+            mobile : {
+                position : 'br',
+                yOffset : 60     // Higher number = higher on mobile
+            }
+        }
+    };
+
     (function(){
     var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
     s1.async=true;
@@ -481,15 +496,6 @@
     s1.setAttribute('crossorigin','*');
     s0.parentNode.insertBefore(s1,s0);
     })();
-    
-    // Simple mobile positioning - only on load
-    Tawk_API.onLoad = function(){
-        if (window.innerWidth <= 768) {
-            const style = document.createElement('style');
-            style.textContent = '@media (max-width: 768px) { body > div[style*="z-index: 2000000000"] { bottom: 80px !important; } }';
-            document.head.appendChild(style);
-        }
-    };
     </script>
     <!--End of Tawk.to Script-->
 

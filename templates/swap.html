@@ -328,11 +328,24 @@
 
 <!-- Custom JS -->
 <script src="{% static 'js/main.js' %}"></script>
-{% include 'partials/dashboard_footer.html' %}
-
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+
+// This part moves the widget higher
+Tawk_API.customStyle = {
+    visibility : {
+        desktop : {
+            position : 'br', // 'br' is bottom right
+            yOffset : 60     // Higher number = higher on page
+        },
+        mobile : {
+            position : 'br',
+            yOffset : 60     // Higher number = higher on mobile
+        }
+    }
+};
+
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
 s1.async=true;
@@ -341,17 +354,9 @@ s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
-
-// Move widget up on mobile
-Tawk_API.onLoad = function(){
-    if (window.innerWidth <= 768) {
-        const iframe = document.querySelector('iframe[title="chat widget"]');
-        if (iframe && iframe.parentElement) {
-            iframe.parentElement.style.bottom = '80px';
-        }
-    }
-};
 </script>
 <!--End of Tawk.to Script-->
+
+{% include 'partials/dashboard_footer.html' %}
 </body>
 </html>

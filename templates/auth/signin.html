@@ -57,32 +57,4 @@
     </div>
 </section>
 
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/69c2b5e29dd5631c36a71111/1jkg9cve9';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-
-// CSS injection to override inline styles
-(function() {
-    function injectCSS() {
-        if (document.getElementById('tawk-override')) return;
-        const style = document.createElement('style');
-        style.id = 'tawk-override';
-        style.textContent = '@media (max-width: 768px) { body > div[style*="z-index"][style*="2000000000"] { bottom: 80px !important; } }';
-        document.head.appendChild(style);
-        console.log('✅ Tawk CSS override injected');
-    }
-    Tawk_API.onLoad = function(){ setTimeout(injectCSS, 100); };
-    setTimeout(injectCSS, 500);
-})();
-</script>
-<!--End of Tawk.to Script-->
-
 {% endblock %}
